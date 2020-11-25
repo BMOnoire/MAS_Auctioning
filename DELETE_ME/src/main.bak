@@ -1,0 +1,185 @@
+import java.io.File;
+import java.io.PrintWriter;
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+
+        //number of sellers
+        int k = 1;
+        //number of buyers
+        int n = 2;
+        //number of auction rounds
+        int r = 5;
+        //universal maximum starting price
+        double sMax = 10;
+        //penalty factor
+        double epsilon = 0.25;
+        //auction type
+        AuctionType type = AuctionType.LEVELED_COMMITMENT;
+        //maximum bidding factor
+        double biddingFactorMax = 2;
+
+	// increment n,k fixed rest
+	ArrayList<Simulation> simulationsResult = new ArrayList<>();
+	for(int i = 0; i <= 30; i++, k++, n++) {
+        	Simulation simulation = new Simulation(k, n, r, sMax, epsilon, type, biddingFactorMax);
+        	simulation.run();
+		simulationsResult.add(simulation);
+	}
+
+	// plot results before clearing the list
+	simulationsResult.clear();
+	
+	// PURE
+	for(int i = 0; i <= 30; i++, k++, n++) {
+        	Simulation simulation = new Simulation(k, n, r, sMax, epsilon, AuctionType.PURE, biddingFactorMax);
+        	simulation.run();
+		simulationsResult.add(simulation);
+	}
+
+	// plot results before clearing the list
+	simulationsResult.clear();
+
+	/*
+	// increment n,k,r fixed rest
+	for(int i = 0; i <= 30; i++, k++, n++,r += 2) {
+        Simulation simulation = new Simulation(k, n, r, sMax, epsilon, type, biddingFactorMax);
+        simulation.run();
+	}
+
+	// lots of n,k and low penalty factor
+	for(int i = 0; i <= 30; i++) {
+        Simulation simulation = new Simulation(29, 30, r, sMax, 0.001, type, biddingFactorMax);
+        simulation.run();
+	}
+
+	// lots of n,k and high penalty factor
+	for(int i = 0; i <= 30; i++) {
+        Simulation simulation = new Simulation(29, 30, r, sMax, 0.9, type, biddingFactorMax);
+        simulation.run();
+	}
+
+	// small number of n,k and low penalty factor
+	for(int i = 0; i <= 30; i++) {
+        Simulation simulation = new Simulation(1, 2, r, sMax, 0.001, type, biddingFactorMax);
+        simulation.run();
+	}
+
+	// small number of n,k and low penalty factor
+	for(int i = 0; i <= 30; i++) {
+        Simulation simulation = new Simulation(1, 2, r, sMax, 0.9, type, biddingFactorMax);
+        simulation.run();
+	}
+
+	// bidding factor, fixed n,k 
+	Random rand = new Random();
+	for(int i = 0; i <= 30; i++) {
+	biddingFactorMax = rand.nextDouble();
+	if(rand.nextInt(100) > 50) {
+		biddingFactorMax += rand.nextDouble();
+	}
+        Simulation simulation = new Simulation(10, 16, r, sMax, 0.3, type, biddingFactorMax);
+        simulation.run();
+	}
+	//
+	// PURE
+	//
+
+	// increment n,k,r fixed rest
+	for(int i = 0; i <= 30; i++, k++, n++,r += 2) {
+        Simulation simulation = new Simulation(k, n, r, sMax, epsilon, type, biddingFactorMax);
+        simulation.run();
+	}
+
+	// lots of n,k and low penalty factor
+	for(int i = 0; i <= 30; i++) {
+        Simulation simulation = new Simulation(29, 30, r, sMax, 0.001, type, biddingFactorMax);
+        simulation.run();
+	}
+
+	// lots of n,k and high penalty factor
+	for(int i = 0; i <= 30; i++) {
+        Simulation simulation = new Simulation(29, 30, r, sMax, 0.9, type, biddingFactorMax);
+        simulation.run();
+	}
+
+	// small number of n,k and low penalty factor
+	for(int i = 0; i <= 30; i++) {
+        Simulation simulation = new Simulation(1, 2, r, sMax, 0.001, type, biddingFactorMax);
+        simulation.run();
+	}
+
+	// small number of n,k and low penalty factor
+	for(int i = 0; i <= 30; i++) {
+        Simulation simulation = new Simulation(1, 2, r, sMax, 0.9, type, biddingFactorMax);
+        simulation.run();
+	}
+	*/
+    }
+    
+    private void plotBuyerRevenue(ArrayList<Simulation> simulations, AuctionType auction) {
+	try {
+	PrintWriter out = new PrintWriter("scripts/buyersRevenueXNumberOfBuyers.py", "UTF-8"); 
+	plotRevenue(simulations, auction, out);
+	out.println("plt.xlabel('Number of buyers')");
+	out.println("plt.ylabel('Buyers average profit')");
+	out.println("plt.legend()");
+	out.println("");
+	out.close();
+	} catch (Exception e) { e.printStackTrace(); }
+    }
+
+    
+    private void plotSellerRevenue(ArrayList<Simulation> simulations, AuctionType auction) {
+	try {
+	PrintWriter out = new PrintWriter("scripts/sellersRevenueXNumberOfSellers.py", "UTF-8"); 
+	plotRevenue(simulations, auction, out);
+	out.println("plt.xlabel('Number of sellers')");
+	out.println("plt.ylabel('Sellers average profit')");
+	out.println("plt.legend()");
+	out.println("");
+	out.close();
+	} catch (Exception e) { e.printStackTrace(); }
+    }
+
+    private void plotRevenue(ArrayList<Simulation> simulations, AuctionType auction, PrintWriter out) {
+	try {
+	out.println("import matplotlib");
+	out.println("import matplotlib.pyplot as plt");
+	out.println("import numpy as np");
+	out.println("");
+	ArrayList<String> revenues = new ArrayList<>();
+	ArrayList<String> number = new ArrayList<>();
+
+	for(Simulation s : simulations) {
+		revenues.add(Double.toString(s.getSellerRevenueAvg()));
+		number.add(Integer.toString(s.getSellersSize()));
+	}
+
+	String n = String.join(",", number);
+	String r = String.join(",", revenues);
+
+	if (auction == AuctionType.PURE)
+		out.println("plt.plot([ " + n + "], [" + r + "], label='pure')");
+	else
+		out.println("plt.plot([ " + n + "], [" + r + "], label='Leveled commitment')");
+	out.close();
+	} catch (Exception e) { e.printStackTrace(); }
+    }
+
+    /**
+     * Executes the python scripts to plot the experiments results.
+    private void plotExperiments() {
+	    Process p = Runtime.exec(
+			        new String[]{"python", "scripts/main.py", packet.toString()});
+
+	    BufferedWriter writer = new BufferedWriter(
+			        new OutputStreamWriter(p.getOutputStream()));
+
+	    writer.newLine();
+	    writer.close();
+    }
+    */
+
+}
