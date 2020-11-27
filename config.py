@@ -8,7 +8,7 @@ test_list = [
         "n_rounds": 9,
         "max_starting_price": 10,
         "epsilon": 1,
-        "type": "pure",
+        "type": "PURE_AUCTIONING",
         "params": []
     },
     {
@@ -19,7 +19,7 @@ test_list = [
         "n_rounds": 8,
         "max_starting_price": 10,
         "epsilon": 1,
-        "type": "pure",
+        "type": "PURE_AUCTIONING",
         "params": []
     }
 ]

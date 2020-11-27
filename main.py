@@ -1,13 +1,14 @@
 import config as cfg
 import matplotlib.pyplot as plt
-import numpy
-from numpy import random
+import numpy as np
+#from numpy import random
 import pandas as pd
 import seller
 import buyer
+import random
 
-numpy.random.seed(1)
-print(random.permutation(10))
+np.random.seed(1)
+print(np.random.permutation(10))
 
 
 
@@ -19,40 +20,54 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, epsil
     # init OUTCOME
     market_price_stats, seller_profit, buyer_profit = 1, 1, 1
 
-    # init AGENTS
-    seller_list = [seller.Seller(i) for i in range(n_sellers)]
-    buyer_list  = [buyer.Buyer(i, n_sellers, 10) for i in range(n_buyers)]
+    if type == "PURE_AUCTIONING":
+
+        MAX_BIDDING_FACTOR = 10  # TODO check if there is something to do here
+
+        # init AGENTS
+        seller_list = [seller.Seller(i) for i in range(n_sellers)]
+        buyer_list  = [buyer.Buyer(i, seller_list, MAX_BIDDING_FACTOR) for i in range(n_buyers)]
 
 
-
-    for round in range(n_rounds):
-        seller_turn_list = random.permutation(n_sellers) # every round the seller order is random
-        buyer_turn_list = random.permutation(n_buyers)  # every round the buyers order is random
-
-        for t_s in seller_turn_list:
-            seller_price = seller_list[t_s].init_random_starting_price(max_starting_price)
-
-            bid_list = []
-            for t_b in buyer_turn_list:
-                buyer_bid = buyer_list[t_b].bidding_factor_list[t_s] * seller_price# make the bid thanks to the factor given by the factor list
-                bid_list.append(buyer_bid) # note: this bids have the same order of buyer_turn_list
-
-            market_price = sum(bid_list)/len(bid_list) # avg of all the bids
-
-            bid_list = [ (bid if bid <= market_price else 0) for bid in bid_list] # remove the values over the market_price
-            winner_index = numpy.where(bid_list == numpy.amax(bid_list)) # found the winner
-            bid_list[int(winner_index[0])] = 0 # remove is offer
-            winner_payment = numpy.amax(bid_list) # to pick the second max
+        for round in range(n_rounds):
+            # created a shuffled copy of the buyer_list and seller_list every round
+            sellers = random.sample(seller_list, len(seller_list))
+            buyers  = random.sample(buyer_list, len(buyer_list))
 
 
-            seller_profit = winner_payment - seller_price
-            seller_list[t_s].add_to_profit(seller_profit)
+            # start the auctions
+            for slr in sellers:
 
-            winner_profit = market_price - winner_payment
-            buyer_index = buyer_turn_list[winner_index]
-            buyer_list[buyer_index[0]].add_to_profit(winner_profit)
+                seller_price = slr.init_random_starting_price(max_starting_price)
 
-            # TODO delete this buyer for next seller turn ???
+
+                # the buyers start the bids
+                bid_list = []
+                for bur in buyers:
+                    buyer_bid = bur.get_bidding_factor(slr.id) * seller_price  # make the bid thanks to the factor given by the factor list
+
+                    bid_list.append(buyer_bid) # note: this bids have the same order of buyer_turn_list
+
+                # bid end
+                market_price = sum(bid_list)/len(bid_list) # avg of all the bids
+
+                bid_list = [ (bid if bid <= market_price else 0) for bid in bid_list]  # remove the values over the market_price
+                winner_index = bid_list.index(max(bid_list)) # found the first winner, the other ones... NO
+                bid_list[winner_index] = 0 # removed is offer...
+                winner_payment = np.amax(bid_list) # ...to pick the second max
+
+                # profit for sellers
+                seller_profit = winner_payment - seller_price
+                slr.add_to_profit(seller_profit)
+
+                # profit for buyers
+                winner = buyers.pop(winner_index)  # remove the winner from the other auctions
+                winner_profit = market_price - winner_payment
+
+                for real_bur in buyer_list:  # update the buyer profit, Note: the real list
+                    if real_bur.id == winner.id:
+                        real_bur.add_to_profit(winner_profit)
+
 
     return market_price_stats, seller_profit, buyer_profit
 
