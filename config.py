@@ -9,7 +9,7 @@ test_list = [
         "max_starting_price": 10,
         "max_bidding_factor": 66,
         "epsilon": 1,
-        "type": "PURE_AUCTIONING",
+        "type": "LEVELED_COMMITMENT",
         "params": []
     },
     {
