@@ -13,20 +13,25 @@ np.random.seed(1)
 
 
 def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_bidding_factor, epsilon, type,
-                    params=[]):
+                    params={}):
     if n_sellers >= n_buyers:
         print("ERROR: Buyers have to be more than Sellers")
         return None
 
+    if params:
+        # TODO add all the strategy logic
+        pass
+
+
     # init OUTCOME
     market_price_list, seller_profit_list, buyer_profit_list = [], [], []
 
+    # init AGENTS
+    seller_list = [seller.Seller(i) for i in range(n_sellers)]
+    buyer_list = [buyer.Buyer(i, seller_list, max_bidding_factor) for i in range(n_buyers)]
+
+
     if type == "PURE_AUCTIONING":
-
-        # init AGENTS
-        seller_list = [seller.Seller(i) for i in range(n_sellers)]
-        buyer_list = [buyer.Buyer(i, seller_list, max_bidding_factor) for i in range(n_buyers)]
-
         for round in range(n_rounds):
             # created a shuffled copy of the buyer_list and seller_list every round
             sellers = random.sample(seller_list, len(seller_list))
@@ -34,22 +39,19 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_b
 
             # start the auctions
             for slr in sellers:
-
                 seller_price = slr.init_random_starting_price(max_starting_price)
 
                 # the buyers start the bids
                 bid_list = []
                 for bur in buyers:
-                    buyer_bid = bur.get_bidding_factor(
-                        slr.id) * seller_price  # make the bid thanks to the factor given by the factor list
-
+                    # make the bid thanks to the factor given by the factor list
+                    buyer_bid = bur.get_bidding_factor(slr.id) * seller_price
                     bid_list.append(buyer_bid)  # note: this bids have the same order of buyer_turn_list
 
                 # bid end
                 market_price = sum(bid_list) / len(bid_list)  # avg of all the bids
 
-                bid_list = [(bid if bid <= market_price else 0) for bid in
-                            bid_list]  # remove the values over the market_price
+                bid_list = [(bid if bid <= market_price else 0) for bid in bid_list]  # remove the values over the market_price
                 winner_index = bid_list.index(max(bid_list))  # found the first winner, the other ones... NO
                 bid_list[winner_index] = 0  # removed is offer...
                 winner_payment = np.amax(bid_list)  # ...to pick the second max
@@ -71,35 +73,29 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_b
                 market_price_list.append(market_price)
                 seller_profit_list.append(seller_profit)
                 buyer_profit_list.append(winner_profit)
-    if type == "LEVELED_COMMITMENT":
-        # init AGENTS
-        seller_list = [seller.Seller(i) for i in range(n_sellers)]
-        buyer_list = [buyer.Buyer(i, seller_list, max_bidding_factor) for i in range(n_buyers)]
 
+    elif type == "LEVELED_COMMITMENT":
         for round in range(n_rounds):
             buyers_won_auction = {}
             # created a shuffled copy of the buyer_list and seller_list every round
-            sellers = deepcopy(seller_list)#random.sample(seller_list, len(seller_list))
-            buyers = random.sample(buyer_list, len(buyer_list))
+            sellers = random.sample(seller_list, len(seller_list))
+            buyers  = random.sample(buyer_list, len(buyer_list))
 
             # start the auctions
             for slr in sellers:
-
                 seller_price = slr.init_random_starting_price(max_starting_price)
 
                 # the buyers start the bids
                 bid_list = []
                 for bur in buyers:
-                    buyer_bid = bur.get_bidding_factor(
-                        slr.id) * seller_price  # make the bid thanks to the factor given by the factor list
-
+                    # make the bid thanks to the factor given by the factor list
+                    buyer_bid = bur.get_bidding_factor(slr.id) * seller_price
                     bid_list.append(buyer_bid)  # note: this bids have the same order of buyer_turn_list
 
                 # bid end
                 market_price = sum(bid_list) / len(bid_list)  # avg of all the bids
 
-                bid_list = [(bid if bid <= market_price else 0) for bid in
-                            bid_list]  # remove the values over the market_price
+                bid_list = [(bid if bid <= market_price else 0) for bid in bid_list]  # remove the values over the market_price
                 winner_index = bid_list.index(max(bid_list))  # found the first winner, the other ones... NO
                 bid_list[winner_index] = 0  # removed is offer...
                 winner_payment = np.amax(bid_list)  # ...to pick the second max
@@ -114,9 +110,9 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_b
                 # add the buyer id inside the dict, if the key already exists, it return the previous value
                 prev_auction = buyers_won_auction.setdefault(winner.id, (slr.id, winner_payment, winner_profit))
                 penalty_fee = 0
-                print("both id", prev_auction[0],slr.id)
+                print("both id", prev_auction[0], slr.id)
                 if prev_auction[0] != slr.id:
-                    print("id",winner.id, "won more than 1 auction, prv:",prev_auction[0],"new",slr.id)
+                    print("id", winner.id, "won more than 1 auction, prv:", prev_auction[0], "new", slr.id)
                     if winner_profit > prev_auction[2]:
                         print("new profit is more than before")
                         penalty_fee = epsilon * prev_auction[1]
@@ -149,22 +145,28 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_b
 
 
 def main():
+
     for test in cfg.test_list:
         if test["execute"]:  # add this because we could want save tests on config but not test them sometimes
-            result = launch_new_test(
-                test["id"],
-                test["n_buyers"],
-                test["n_sellers"],
-                test["n_rounds"],
-                test["max_starting_price"],
-                test["max_bidding_factor"],
-                test["epsilon"],
-                test["type"],
-                test["params"]
-            )
+            result_list = []
+            for n in range(test["times"]):
+                result = launch_new_test(
+                    test["id"],
+                    test["n_buyers"],
+                    test["n_sellers"],
+                    test["n_rounds"],
+                    test["max_starting_price"],
+                    test["max_bidding_factor"],
+                    test["epsilon"],
+                    test["type"],
+                    test["params"]
+                )
             if not result:
                 return 1
+            else:
+                result_list.append(result)
 
+        # TODO here all the graphs and tables
 
 if __name__ == "__main__":
     main()
