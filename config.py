@@ -7,6 +7,7 @@ test_list = [
         "n_sellers": 7,
         "n_rounds": 9,
         "max_starting_price": 10,
+        "max_bidding_factor": 66,
         "epsilon": 1,
         "type": "PURE_AUCTIONING",
         "params": []
@@ -18,6 +19,7 @@ test_list = [
         "n_sellers": 7,
         "n_rounds": 8,
         "max_starting_price": 10,
+        "max_bidding_factor": 66,
         "epsilon": 1,
         "type": "PURE_AUCTIONING",
         "params": []

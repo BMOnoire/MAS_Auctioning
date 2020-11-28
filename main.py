@@ -12,21 +12,19 @@ print(np.random.permutation(10))
 
 
 
-def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, epsilon, type, params = []):
+def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_bidding_factor, epsilon, type, params = []):
     if n_sellers >= n_buyers:
         print("ERROR: Buyers have to be more than Sellers")
         return None
 
     # init OUTCOME
-    market_price_stats, seller_profit, buyer_profit = 1, 1, 1
+    market_price_list, seller_profit_list, buyer_profit_list = [], [], []
 
     if type == "PURE_AUCTIONING":
 
-        MAX_BIDDING_FACTOR = 10  # TODO check if there is something to do here
-
         # init AGENTS
         seller_list = [seller.Seller(i) for i in range(n_sellers)]
-        buyer_list  = [buyer.Buyer(i, seller_list, MAX_BIDDING_FACTOR) for i in range(n_buyers)]
+        buyer_list  = [buyer.Buyer(i, seller_list, max_bidding_factor) for i in range(n_buyers)]
 
 
         for round in range(n_rounds):
@@ -58,7 +56,10 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, epsil
 
                 # profit for sellers
                 seller_profit = winner_payment - seller_price
-                slr.add_to_profit(seller_profit)
+                for real_slr in seller_list:  # update the seller profit, Note: the real list
+                    if real_slr.id == slr.id:
+                        real_slr.add_to_profit(seller_profit)
+
 
                 # profit for buyers
                 winner = buyers.pop(winner_index)  # remove the winner from the other auctions
@@ -68,8 +69,14 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, epsil
                     if real_bur.id == winner.id:
                         real_bur.add_to_profit(winner_profit)
 
+                market_price_list.append(market_price)
+                seller_profit_list.append(seller_profit)
+                buyer_profit_list.append(winner_profit)
 
-    return market_price_stats, seller_profit, buyer_profit
+
+
+
+    return market_price_list, seller_profit_list, buyer_profit_list
 
 
 def main():
@@ -81,6 +88,7 @@ def main():
                 test["n_sellers"],
                 test["n_rounds"],
                 test["max_starting_price"],
+                test["max_bidding_factor"],
                 test["epsilon"],
                 test["type"],
                 test["params"]
