@@ -50,15 +50,18 @@ def plot_heat_map(test_name, q_table, show=False):
 
 def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_bidding_factor, epsilon, type, params={}):
     if n_sellers >= n_buyers:
-        print("ERROR: Buyers have to be more than Sellers")
+        print("ERROR: (", id,") Buyers have to be more than Sellers")
         return None
 
+    biddin_strategy_data, seller_strategy_data = None, None
     if params:
-        # TODO add all the strategy logic
-        strategy_id = params['BIDDING_STRATEGY']
+        biddin_strategy_data = params.get('BIDDING_STRATEGY')
+        seller_strategy_data = params.get('SELLER_STRATEGY')
 
 
     # init OUTCOME
+    outcome = []
+
     market_price_list, seller_profit_list, buyer_profit_list = [], [], []
 
     # init AGENTS
@@ -68,9 +71,17 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_b
 
     if type == "PURE_AUCTIONING":
         for round in range(n_rounds):
+            # for every round init this dict and added the lists of data during the auctions
+            round_stats = {
+                "id": round,
+                "market_price": [],
+                "seller_profit": [],
+                "buyer_profit": []
+            }
+
             # created a shuffled copy of the buyer_list and seller_list every round
             sellers = random.sample(seller_list, len(seller_list))
-            buyers = random.sample(buyer_list, len(buyer_list))
+            buyers  = random.sample(buyer_list, len(buyer_list))
 
             # start the auctions
             for slr in sellers:
@@ -105,21 +116,22 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_b
                     if real_bur.id == winner.id:
                         real_bur.add_to_profit(winner_profit)
 
-                market_price_list.append(market_price)
-                seller_profit_list.append(seller_profit)
-                buyer_profit_list.append(winner_profit)
+                round_stats["market_price"].append(market_price)
+                round_stats["seller_profit"].append(seller_profit)
+                round_stats["buyer_profit"].append(winner_profit)
 
-                strategy_id = params['BIDDING_STRATEGY']
-
-                if strategy_id == 1:
+                if biddin_strategy_data:
                     for b in bid_list:
                         if b == 0:
                             buyer_list[bid_list.index(b)].decrease_bid_factor(slr.id)
                         else:
                             buyer_list[bid_list.index(b)].increase_bid_factor(slr.id)
+                elif seller_strategy_data:
+                    pass
 
+            outcome.append(round_stats)
 
-    elif type == "LEVELED_COMMITMENT":
+    elif type == "LEVELED_COMMITMENT_AUCTIONING":
         for round in range(n_rounds):
             buyers_won_auction = {}
             # created a shuffled copy of the buyer_list and seller_list every round
@@ -186,7 +198,7 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_b
                 seller_profit_list.append(seller_profit)
                 buyer_profit_list.append(winner_profit)
 
-    return market_price_list, seller_profit_list, buyer_profit_list
+    return outcome
 
 
 def main():
@@ -211,6 +223,12 @@ def main():
                 return 1
             else:
                 result_list.append(result)
+
+            asd = 1
+
+
+
+
 
         # TODO here all the graphs and tables
 
