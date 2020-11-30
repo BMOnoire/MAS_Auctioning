@@ -12,7 +12,7 @@ test_list = [
         "epsilon": 0.1,
         "type": "LEVELED_COMMITMENT",
         "params": {
-            "BIDDING_STRATEGY": "TODO_something",
+            "BIDDING_STRATEGY": 1,
             "SELLER_STRATEGY": "TODO_something"
         }
     },

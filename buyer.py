@@ -8,6 +8,8 @@ class Buyer:
         self.profit = 0.0
         self.bidding_factor_max = bidding_factor_max
         self.bidding_factor_list = { slr.id: ( 1 + random() * (bidding_factor_max - 1) ) for slr in seller_list}  # range [1, bidding_factor_max]
+        self.bidding_factor_increase = 5
+        self.bidding_factor_decrease = 0.5
 
 
     def get_bidding_factor(self, seller_id):
@@ -19,8 +21,10 @@ class Buyer:
 
 
     def increase_bid_factor(self, seller_id):
-        self.bidding_factors[seller_id] += random() * (self.bidding_factor_max - self.bidding_factors[seller_id])
+        # self.bidding_factors[seller_id] += random() * (self.bidding_factor_max - self.bidding_factors[seller_id])
+        self.bidding_factors[seller_id] += self.bidding_factor_increase
 
 
     def decrease_bid_factor(self, seller_id):
-        self.bidding_factors[seller_id] -= random() * (self.bidding_factors[seller_id] - 1)
+        # self.bidding_factors[seller_id] -= random() * (self.bidding_factors[seller_id] - 1)
+        self.bidding_factors[seller_id] += self.bidding_factor_decrease

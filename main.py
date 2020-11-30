@@ -55,7 +55,7 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_b
 
     if params:
         # TODO add all the strategy logic
-        pass
+        strategy_id = params['BIDDING_STRATEGY']
 
 
     # init OUTCOME
@@ -88,7 +88,7 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_b
 
                 bid_list = [(bid if bid <= market_price else 0) for bid in bid_list]  # remove the values over the market_price
                 winner_index = bid_list.index(max(bid_list))  # found the first winner, the other ones... NO
-                bid_list[winner_index] = 0  # removed is offer...
+                bid_list[winner_index] = 0   # removed is offer...
                 winner_payment = np.amax(bid_list)  # ...to pick the second max
 
                 # profit for sellers
@@ -108,6 +108,15 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_b
                 market_price_list.append(market_price)
                 seller_profit_list.append(seller_profit)
                 buyer_profit_list.append(winner_profit)
+
+                strategy_id = params['BIDDING_STRATEGY']
+
+                if strategy_id == 1:
+                    for b in bid_list:
+                        if b == 0:
+                            buyer_list[bid_list.index(b)].decrease_bid_factor(slr.id)
+                        else:
+                            buyer_list[bid_list.index(b)].increase_bid_factor(slr.id)
 
 
     elif type == "LEVELED_COMMITMENT":
