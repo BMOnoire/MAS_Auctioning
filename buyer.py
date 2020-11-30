@@ -18,12 +18,9 @@ class Buyer:
         self.profit += profit
 
 
+    def increase_bid_factor(self, seller_id):
+        self.bidding_factors[seller_id] += random() * (self.bidding_factor_max - self.bidding_factors[seller_id])
 
 
     def decrease_bid_factor(self, seller_id):
         self.bidding_factors[seller_id] -= random() * (self.bidding_factors[seller_id] - 1)
-
-    def increase_bid_factor(self, seller_id):
-        self.bidding_factors[seller_id] += random() * (self.bidding_factor_max - self.bidding_factors[seller_id]);
-
-

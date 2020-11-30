@@ -2,18 +2,53 @@ import config as cfg
 import matplotlib.pyplot as plt
 import numpy as np
 # from numpy import random
+import matplotlib.pyplot as plt
+import time
 import pandas as pd
 import seller
 import buyer
 import random
+
 from copy import deepcopy
 
 np.random.seed(1)
 # print(np.random.permutation(10))
 
 
-def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_bidding_factor, epsilon, type,
-                    params={}):
+def plot_graph_result(test_name, epoch_list, avg_list, max_list, min_list, show=False):
+    plt.plot(epoch_list, avg_list, label="avg", color="green")
+    plt.plot(epoch_list, max_list, label="max", color="red")
+    plt.plot(epoch_list, min_list, label="min", color="blue")
+    plt.legend(loc='upper left')
+
+    date = time.strftime("%Y_%m_%d_%H_%M_%S")
+    plt.savefig(f"imgs\\graph_test_{test_name}_{date}")
+
+    if show:
+        plt.show()
+
+    plt.clf()
+
+
+def plot_heat_map(test_name, q_table, show=False):
+    heatmap = np.max(q_table, axis=2)
+    plt.imshow(heatmap, cmap='jet', interpolation='nearest', extent=[-0.07, 0.07, 0.6, -1.2], aspect='auto')
+    plt.title("State Value function")
+    plt.xlabel("Speed (-0.07 to 0.07)")
+    plt.ylabel("Position (-1.2 to 0.6)")
+    plt.gca().invert_yaxis()
+    plt.colorbar()
+
+    date = time.strftime("%Y_%m_%d_%H_%M_%S")
+    plt.savefig(f"imgs\\heatmap_test_{test_name}_{date}")
+
+    if show:
+        plt.show()
+
+    plt.clf()
+
+
+def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_bidding_factor, epsilon, type, params={}):
     if n_sellers >= n_buyers:
         print("ERROR: Buyers have to be more than Sellers")
         return None
@@ -74,6 +109,7 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_b
                 seller_profit_list.append(seller_profit)
                 buyer_profit_list.append(winner_profit)
 
+
     elif type == "LEVELED_COMMITMENT":
         for round in range(n_rounds):
             buyers_won_auction = {}
@@ -128,7 +164,7 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_b
                     if real_slr.id == slr.id:
                         real_slr.add_to_profit(seller_profit)
                     if real_slr.id == prev_auction[0]:
-                        print("fee",penalty_fee)
+                        print("fee", penalty_fee)
                         real_slr.add_to_profit(penalty_fee)
 
                 for real_bur in buyer_list:  # update the buyer profit, Note: the real list
@@ -147,6 +183,7 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_b
 def main():
 
     for test in cfg.test_list:
+
         if test["execute"]:  # add this because we could want save tests on config but not test them sometimes
             result_list = []
             for n in range(test["times"]):
