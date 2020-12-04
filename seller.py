@@ -1,4 +1,8 @@
 from numpy import random
+import config as cfg
+
+if cfg.SEED:
+    random.seed(cfg.SEED)
 
 class Seller:
 

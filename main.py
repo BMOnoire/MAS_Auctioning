@@ -8,21 +8,29 @@ import pandas as pd
 import seller
 import buyer
 import random
+import statistics as stats
+import janitor
 
 from copy import deepcopy
+import config as cfg
 
-np.random.seed(1)
+if cfg.SEED:
+    random.seed(cfg.SEED)
 # print(np.random.permutation(10))
 
 
-def plot_graph_result(test_name, epoch_list, avg_list, max_list, min_list, show=False):
-    plt.plot(epoch_list, avg_list, label="avg", color="green")
-    plt.plot(epoch_list, max_list, label="max", color="red")
-    plt.plot(epoch_list, min_list, label="min", color="blue")
+def plot_graph_result(test_name, label, round_list, value_list, step, show=False):
+
+    round_list = [val for i, val in enumerate(round_list) if not i % step ]
+    value_list = [val for i, val in enumerate(value_list) if not i % step ]
+
+    plt.plot(round_list, value_list, label=label.replace("_", " "), color="green")
+
+
     plt.legend(loc='upper left')
 
-    date = time.strftime("%Y_%m_%d_%H_%M_%S")
-    plt.savefig(f"imgs\\graph_test_{test_name}_{date}")
+   #date = time.strftime("%Y_%m_%d_%H_%M_%S")
+    plt.savefig(f"imgs\\graph_test_{test_name}_{label}")
 
     if show:
         plt.show()
@@ -205,32 +213,55 @@ def main():
 
     for test in cfg.test_list:
 
-        if test["execute"]:  # add this because we could want save tests on config but not test them sometimes
-            result_list = []
-            for n in range(test["times"]):
-                result = launch_new_test(
-                    test["id"],
-                    test["n_buyers"],
-                    test["n_sellers"],
-                    test["n_rounds"],
-                    test["max_starting_price"],
-                    test["max_bidding_factor"],
-                    test["epsilon"],
-                    test["type"],
-                    test["params"]
-                )
+        if not test["execute"]:  # add this because we could want save tests on config but not test them sometimes
+            continue
+
+        result_list = []
+        for n in range(test["times"]):
+            result = launch_new_test(
+                test["id"],
+                test["n_buyers"],
+                test["n_sellers"],
+                test["n_rounds"],
+                test["max_starting_price"],
+                test["max_bidding_factor"],
+                test["epsilon"],
+                test["type"],
+                test["params"]
+            )
             if not result:
                 return 1
             else:
                 result_list.append(result)
 
-            asd = 1
+        round_list = range(test["n_rounds"])
+        test_avg_list = []
+        market_final_value, seller_final_value, buyer_final_value = [0] * test["n_rounds"], [0] * test["n_rounds"], [0] * test["n_rounds"]
+        for result in result_list:
+            avg_market_price_list, avg_seller_profit_list, avg_buyer_profit_list = [], [], []
+            for round in result:
+                avg_market_price = stats.mean(round["market_price"])
+                avg_seller_profit = stats.mean(round["seller_profit"])
+                avg_buyer_profit = stats.mean(round["buyer_profit"])
 
+                avg_market_price_list.append(avg_market_price)
+                avg_seller_profit_list.append(avg_seller_profit)
+                avg_buyer_profit_list.append(avg_buyer_profit)
 
+            market_final_value = [a + b for a, b in zip(market_final_value, avg_market_price_list)]
+            seller_final_value = [a + b for a, b in zip(seller_final_value, avg_seller_profit_list)]
+            buyer_final_value  = [a + b for a, b in zip(buyer_final_value, avg_buyer_profit_list)]
 
+        market_final_value = np.array(market_final_value) / test["times"]
+        seller_final_value = np.array(seller_final_value) / test["times"]
+        buyer_final_value  = np.array(buyer_final_value)  / test["times"]
 
+        step_plotting = 20
+        plot_graph_result(test["id"], "market_price", round_list, market_final_value, step_plotting, True)
+        plot_graph_result(test["id"], "seller_profit", round_list, seller_final_value, step_plotting, True)
+        plot_graph_result(test["id"], "buyer_profit", round_list, buyer_final_value, step_plotting, True)
 
-        # TODO here all the graphs and tables
 
 if __name__ == "__main__":
+    janitor.create_dir("imgs")
     main()

@@ -1,12 +1,16 @@
 
+SEED = 1
+
+ROUNDS = 1000
+
 test_list = [
     {
-        "id": "first_try",
+        "id": "1",
         "execute": True,
-        "times": 1,
-        "n_buyers": 8,
-        "n_sellers": 7,
-        "n_rounds": 9,
+        "times": 2,
+        "n_buyers": 6,
+        "n_sellers": 5,
+        "n_rounds": ROUNDS,
         "max_starting_price": 10,
         "max_bidding_factor": 66,
         "epsilon": 0.1,
@@ -14,15 +18,15 @@ test_list = [
         "params": {
             "BIDDING_STRATEGY": [],
             "SELLER_STRATEGY": None
-        }
+        },
     },
     {
-        "id": "first_nope",
-        "execute": False,
-        "times" : 2,
-        "n_buyers": 6,
-        "n_sellers": 7,
-        "n_rounds": 8,
+        "id": "2",
+        "execute": True,
+        "times" : 100,
+        "n_buyers": 5,
+        "n_sellers": 10,
+        "n_rounds": ROUNDS,
         "max_starting_price": 10,
         "max_bidding_factor": 66,
         "epsilon": 1,
