@@ -207,6 +207,15 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_b
                     if real_bur.id == prev_auction[0]:
                         real_bur.add_to_profit(-penalty_fee)
 
+                if biddin_strategy_data:
+                    for b in bid_list:
+                        if b == 0:
+                            buyer_list[bid_list.index(b)].decrease_bid_factor(slr.id)
+                        else:
+                            buyer_list[bid_list.index(b)].increase_bid_factor(slr.id)
+                elif seller_strategy_data:
+                    pass
+
                 market_price_list.append(market_price)
                 seller_profit_list.append(seller_profit)
                 buyer_profit_list.append(winner_profit)
