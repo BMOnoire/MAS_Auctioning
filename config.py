@@ -3,6 +3,8 @@ SEED = 1
 
 ROUNDS = 1000
 
+
+
 test_list = [
     {
         "id": "1",
@@ -18,7 +20,7 @@ test_list = [
         "epsilon": 0.2,
         "type": "PURE_AUCTIONING",
         "params": {
-            "BIDDING_STRATEGY": [],
+            "BIDDING_STRATEGY": True,
             "SELLER_STRATEGY": None
         },
     },
