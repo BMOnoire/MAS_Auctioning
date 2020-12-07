@@ -20,9 +20,9 @@ if cfg.SEED:
 
 
 def plot_graph_result(test_name, label, round_list, value_list, step, show=False):
-
-    round_list = [val for i, val in enumerate(round_list) if not i % step ]
-    value_list = [val for i, val in enumerate(value_list) if not i % step ]
+    if step:
+        round_list = [val for i, val in enumerate(round_list) if not i % step ]
+        value_list = [val for i, val in enumerate(value_list) if not i % step ]
 
     plt.plot(round_list, value_list, label=label.replace("_", " "), color="green")
 
@@ -125,8 +125,8 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_b
                         real_bur.add_to_profit(winner_profit)
 
                 round_stats["market_price"].append(market_price)
-                round_stats["seller_profit"].append(seller_profit)
-                round_stats["buyer_profit"].append(winner_profit)
+                #round_stats["seller_profit"].append(seller_profit)
+                #round_stats["buyer_profit"].append(winner_profit)
 
                 if biddin_strategy_data:
                     for b in bid_list:
@@ -136,7 +136,8 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_b
                             buyer_list[bid_list.index(b)].increase_bid_factor(slr.id)
                 elif seller_strategy_data:
                     pass
-
+            round_stats["seller_profit"] = [seller.profit for seller in seller_list]
+            round_stats["buyer_profit"] = [buyer.profit for buyer in buyer_list]
             outcome.append(round_stats)
 
     elif type == "LEVELED_COMMITMENT_AUCTIONING":
@@ -256,7 +257,7 @@ def main():
         seller_final_value = np.array(seller_final_value) / test["times"]
         buyer_final_value  = np.array(buyer_final_value)  / test["times"]
 
-        step_plotting = 20
+        step_plotting = None
         plot_graph_result(test["id"], "market_price", round_list, market_final_value, step_plotting, True)
         plot_graph_result(test["id"], "seller_profit", round_list, seller_final_value, step_plotting, True)
         plot_graph_result(test["id"], "buyer_profit", round_list, buyer_final_value, step_plotting, True)
