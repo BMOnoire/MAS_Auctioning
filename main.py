@@ -107,9 +107,12 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_b
 
                 bid_list = [(bid if bid <= market_price else 0) for bid in bid_list]  # remove the values over the market_price
                 winner_index = bid_list.index(max(bid_list))  # found the first winner, the other ones... NO
-                bid_list[winner_index] = 0   # removed is offer...
+                first_bid = bid_list[winner_index]
+                bid_list[winner_index] = 0   # removed is offer (first_bid)...
                 winner_payment = np.amax(bid_list)  # ...to pick the second max
 
+                if not winner_payment: # there is only one winner and the max is 0
+                    winner_payment = 0.5 * (first_bid + market_price)
                 # profit for sellers
                 seller_profit = winner_payment - seller_price
                 for real_slr in seller_list:  # update the seller profit, Note: the real list
@@ -136,6 +139,7 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_b
                             buyer_list[bid_list.index(b)].increase_bid_factor(slr.id)
                 elif seller_strategy_data:
                     pass
+
             round_stats["seller_profit"] = [seller.profit for seller in seller_list]
             round_stats["buyer_profit"] = [buyer.profit for buyer in buyer_list]
             outcome.append(round_stats)

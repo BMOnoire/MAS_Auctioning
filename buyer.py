@@ -11,8 +11,8 @@ class Buyer:
         self.profit = 0.0
         self.bidding_factor_max = bidding_factor_max
         self.bidding_factor_list = { slr.id: ( 1 + random.random() * (bidding_factor_max - 1) ) for slr in seller_list}  # range [1, bidding_factor_max]
-        self.bidding_factor_increase = random() * self.bidding_factor_max  # random number between 1 and bidding_factor_max
-        self.bidding_factor_decrease = random()  # random number between 0 and 1
+        self.bidding_factor_increase = random.random() * self.bidding_factor_max  # random number between 1 and bidding_factor_max
+        self.bidding_factor_decrease = random.random()  # random number between 0 and 1
 
     def get_bidding_factor(self, seller_id):
         return self.bidding_factor_list[seller_id]
