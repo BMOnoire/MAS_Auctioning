@@ -38,24 +38,6 @@ def plot_graph_result(test_name, label, round_list, value_list, step, show=False
     plt.clf()
 
 
-def plot_heat_map(test_name, q_table, show=False):
-    heatmap = np.max(q_table, axis=2)
-    plt.imshow(heatmap, cmap='jet', interpolation='nearest', extent=[-0.07, 0.07, 0.6, -1.2], aspect='auto')
-    plt.title("State Value function")
-    plt.xlabel("Speed (-0.07 to 0.07)")
-    plt.ylabel("Position (-1.2 to 0.6)")
-    plt.gca().invert_yaxis()
-    plt.colorbar()
-
-    date = time.strftime("%Y_%m_%d_%H_%M_%S")
-    plt.savefig(f"imgs\\heatmap_test_{test_name}_{date}")
-
-    if show:
-        plt.show()
-
-    plt.clf()
-
-
 def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_bidding_factor, range_bidding_factor_increase, range_bidding_factor_decrease, epsilon, type, params={}):
     if n_sellers >= n_buyers:
         print("ERROR: (", id,") Buyers have to be more than Sellers")
