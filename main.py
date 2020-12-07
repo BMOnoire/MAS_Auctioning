@@ -56,7 +56,7 @@ def plot_heat_map(test_name, q_table, show=False):
     plt.clf()
 
 
-def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_bidding_factor, epsilon, type, params={}):
+def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_bidding_factor, range_bidding_factor_increase, range_bidding_factor_decrease, epsilon, type, params={}):
     if n_sellers >= n_buyers:
         print("ERROR: (", id,") Buyers have to be more than Sellers")
         return None
@@ -74,7 +74,7 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_b
 
     # init AGENTS
     seller_list = [seller.Seller(i) for i in range(n_sellers)]
-    buyer_list = [buyer.Buyer(i, seller_list, max_bidding_factor) for i in range(n_buyers)]
+    buyer_list = [buyer.Buyer(i, seller_list, max_bidding_factor, range_bidding_factor_increase, range_bidding_factor_decrease) for i in range(n_buyers)]
 
 
     if type == "PURE_AUCTIONING":
@@ -230,11 +230,14 @@ def main():
                 test["n_rounds"],
                 test["max_starting_price"],
                 test["max_bidding_factor"],
+                test["range_bidding_factor_increase"],
+                test["range_bidding_factor_decrease"],
                 test["epsilon"],
                 test["type"],
                 test["params"]
             )
             if not result:
+
                 return 1
             else:
                 result_list.append(result)
