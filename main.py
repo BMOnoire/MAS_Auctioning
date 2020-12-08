@@ -1,41 +1,14 @@
-import config as cfg
-import matplotlib.pyplot as plt
 import numpy as np
-# from numpy import random
-import matplotlib.pyplot as plt
-import time
-import pandas as pd
 import seller
 import buyer
 import random
 import statistics as stats
 import janitor
-
-from copy import deepcopy
 import config as cfg
+import plotting
 
 if cfg.SEED:
     random.seed(cfg.SEED)
-# print(np.random.permutation(10))
-
-
-def plot_graph_result(test_name, label, round_list, value_list, step, show=False):
-    if step:
-        round_list = [val for i, val in enumerate(round_list) if not i % step ]
-        value_list = [val for i, val in enumerate(value_list) if not i % step ]
-
-    plt.plot(round_list, value_list, label=label.replace("_", " "), color="green")
-
-
-    plt.legend(loc='upper left')
-
-   #date = time.strftime("%Y_%m_%d_%H_%M_%S")
-    plt.savefig(f"imgs\\graph_test_{test_name}_{label}")
-
-    if show:
-        plt.show()
-
-    plt.clf()
 
 
 def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_bidding_factor, range_bidding_factor_increase, range_bidding_factor_decrease, epsilon, type, params={}):
@@ -160,6 +133,7 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_b
 
 
 def main():
+    id_list, market_list, seller_list, buyer_list = [], [], [], []
 
     for test in cfg.test_list:
 
@@ -188,7 +162,6 @@ def main():
                 result_list.append(result)
 
         round_list = range(test["n_rounds"])
-        test_avg_list = []
         market_final_value, seller_final_value, buyer_final_value = [0] * test["n_rounds"], [0] * test["n_rounds"], [0] * test["n_rounds"]
         for result in result_list:
             avg_market_price_list, avg_seller_profit_list, avg_buyer_profit_list = [], [], []
@@ -207,13 +180,22 @@ def main():
 
         market_final_value = np.array(market_final_value) / test["times"]
         seller_final_value = np.array(seller_final_value) / test["times"]
-        buyer_final_value  = np.array(buyer_final_value)  / test["times"]
+        buyer_final_value  =  np.array(buyer_final_value) / test["times"]
 
-        step_plotting = None
-        plot_graph_result(test["id"], "market_price", round_list, market_final_value, step_plotting, cfg.SHOW_GRAPHS)
-        plot_graph_result(test["id"], "seller_profit", round_list, seller_final_value, step_plotting, cfg.SHOW_GRAPHS)
-        plot_graph_result(test["id"], "buyer_profit", round_list, buyer_final_value, step_plotting, cfg.SHOW_GRAPHS)
 
+        plotting.plot_graph_result(test["id"], "market_price", round_list, market_final_value, cfg.STEP_PLOTTING, cfg.SHOW_SINGLE_GRAPH)
+        plotting.plot_graph_result(test["id"], "seller_profit", round_list, seller_final_value, cfg.STEP_PLOTTING, cfg.SHOW_SINGLE_GRAPH)
+        plotting.plot_graph_result(test["id"], "buyer_profit", round_list, buyer_final_value, cfg.STEP_PLOTTING, cfg.SHOW_SINGLE_GRAPH)
+
+        plotting.plot_value_comparison("value_comparison", round_list, market_final_value, seller_final_value, buyer_final_value, cfg.STEP_PLOTTING, cfg.SHOW_SINGLE_GRAPH)
+
+        id_list.append(test["id"]),
+        market_list.append(market_final_value)
+        seller_list.append(seller_final_value)
+        buyer_list.append(buyer_final_value)
+
+
+    plotting.plot_diff_results("test_comparison", round_list, id_list, market_list, seller_list, buyer_list, cfg.STEP_PLOTTING, cfg.SHOW_MULTI_GRAPH)
 
 if __name__ == "__main__":
     janitor.create_dir("imgs")

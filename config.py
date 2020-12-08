@@ -2,17 +2,19 @@
 SEED = 1
 
 ROUNDS = 1000
+TIMES = 1
 
-SHOW_GRAPHS = True
-
+SHOW_SINGLE_GRAPH = True
+SHOW_MULTI_GRAPH = True
+STEP_PLOTTING = 5
 
 test_list = [
     {
-        "id": "1",
+        "id": "PURE_BID_STRAT",
         "execute": True,
-        "times": 10,
-        "n_buyers": 4,
-        "n_sellers": 3,
+        "times": TIMES,
+        "n_buyers": 10,
+        "n_sellers": 7,
         "n_rounds": ROUNDS,
         "max_starting_price": 10,
         "range_bidding_factor_increase": [1, 10],
@@ -26,11 +28,11 @@ test_list = [
         },
     },
     {
-        "id": "2",
+        "id": "LEVL_BID_STRAT",
         "execute": True,
-        "times" : 10,
-        "n_buyers": 4,
-        "n_sellers": 3,
+        "times" : TIMES,
+        "n_buyers": 10,
+        "n_sellers": 7,
         "n_rounds": ROUNDS,
         "max_starting_price": 10,
         "range_bidding_factor_increase": [1, 10],

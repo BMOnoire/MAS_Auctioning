@@ -26,10 +26,6 @@ class Seller:
         self.profit += profit
 
 
-
-
-
-
     def add_to_market_prices(self, value):
         self.market_prices.append(value);
 
