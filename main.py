@@ -48,15 +48,18 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_b
         buyers_won_auction = {}  # only for leveled
         for slr in sellers:
             seller_price = slr.init_random_starting_price(max_starting_price)
+            print(seller_price)
 
             # the buyers start the bids
             bid_list = []
             for bur in buyers:
                 # make the bid thanks to the factor given by the factor list
                 buyer_bid = bur.get_bidding_factor(slr.id) * seller_price
+                print(f"bidding factor {bur}", bur.get_bidding_factor(slr.id))
                 bid_list.append(buyer_bid)  # note: this bids have the same order of buyer_turn_list
 
             # bid end
+            print("bid_list:", bid_list)
             market_price = sum(bid_list) / len(bid_list)  # avg of all the bids
 
             round_stats["market_price"].append(market_price)
@@ -115,11 +118,13 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_b
                         real_bur.add_to_profit(-penalty_fee)
 
             if biddin_strategy_data:
-                for b in bid_list:
-                    if b == 0:
-                        buyer_list[bid_list.index(b)].decrease_bid_factor(slr.id)
+                # print("bid-list", bid_list)
+                for b in range(len(bid_list)):
+                    # print(b)
+                    if bid_list[b] == 0:
+                        buyer_list[b].decrease_bid_factor(slr.id)
                     else:
-                        buyer_list[bid_list.index(b)].increase_bid_factor(slr.id)
+                        buyer_list[b].increase_bid_factor(slr.id)
             elif seller_strategy_data:
                 pass
 
@@ -187,7 +192,7 @@ def main():
         plotting.plot_graph_result(test["id"], "seller_profit", round_list, seller_final_value, cfg.STEP_PLOTTING, cfg.SHOW_SINGLE_GRAPH)
         plotting.plot_graph_result(test["id"], "buyer_profit", round_list, buyer_final_value, cfg.STEP_PLOTTING, cfg.SHOW_SINGLE_GRAPH)
 
-        plotting.plot_value_comparison("value_comparison", round_list, market_final_value, seller_final_value, buyer_final_value, cfg.STEP_PLOTTING, cfg.SHOW_SINGLE_GRAPH)
+        plotting.plot_value_comparison(test["id"], round_list, market_final_value, seller_final_value, buyer_final_value, cfg.STEP_PLOTTING, cfg.SHOW_SINGLE_GRAPH)
 
         id_list.append(test["id"]),
         market_list.append(market_final_value)

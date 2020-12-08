@@ -16,7 +16,7 @@ def plot_graph_result(test_name, label, round_list, value_list, step, show=False
 
     plt.legend(loc='upper left')
 
-    plt.savefig(f"imgs\\graph_test_{test_name}_{label}")
+    plt.savefig(f"imgs/graph_test_{test_name}_{label}")
 
     if show:
         plt.show()
@@ -40,7 +40,7 @@ def plot_value_comparison(test_name, round_list, market_list, seller_list, buyer
 
     plt.legend(loc='upper left')
 
-    plt.savefig(f"imgs\\graph_comparison_{test_name}")
+    plt.savefig(f"imgs/graph_comparison_{test_name}")
 
     if show:
         plt.show()
@@ -86,11 +86,11 @@ def plot_diff_results(test_name, round_list, label_list, market_set, seller_set,
 #
 
 
-    plt.savefig(f"imgs\\graph_test_{test_name}")
+    plt.savefig(f"imgs/graph_test_{test_name}")
 
     if show:
         wm = plt.get_current_fig_manager()
-        wm.window.state('zoomed')
+        # wm.window.state('zoomed')
         plt.show()
 
     plt.close()

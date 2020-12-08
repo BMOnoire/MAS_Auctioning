@@ -24,9 +24,11 @@ class Buyer:
 
     def increase_bid_factor(self, seller_id):
         # self.bidding_factors[seller_id] += random() * (self.bidding_factor_max - self.bidding_factors[seller_id])
-        self.bidding_factor_list[seller_id] += self.bidding_factor_increase
+        self.bidding_factor_list[seller_id] *= self.bidding_factor_increase
 
 
     def decrease_bid_factor(self, seller_id):
         # self.bidding_factors[seller_id] -= random() * (self.bidding_factors[seller_id] - 1)
-        self.bidding_factor_list[seller_id] += self.bidding_factor_decrease
+        # print("before:", self.id, seller_id, self.bidding_factor_list[seller_id], self.bidding_factor_decrease)
+        self.bidding_factor_list[seller_id] *= self.bidding_factor_decrease
+        # print("after:", self.id, seller_id, self.bidding_factor_list[seller_id], self.bidding_factor_decrease)
