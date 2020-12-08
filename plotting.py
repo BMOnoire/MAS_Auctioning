@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import os
 
 
 color_list = ["red", "green", "blue"]
@@ -50,8 +51,7 @@ def plot_value_comparison(test_name, round_list, market_list, seller_list, buyer
 
 def plot_diff_results(test_name, round_list, label_list, market_set, seller_set, buyer_set, step, show=False):
     lines = []
-    fig, (ax1, ax2, ax3) = plt.subplots(1, 3) #, figsize=(20, 8)
-    #fig.suptitle('Comparison of different tests')
+    fig, (ax1, ax2, ax3) = plt.subplots(1, 3)
 
     if step:
         round_list = [val for i, val in enumerate(round_list) if not i % step ]
@@ -75,22 +75,19 @@ def plot_diff_results(test_name, round_list, label_list, market_set, seller_set,
             buyer = [val for i, val in enumerate(buyer) if not i % step]
         ax3.plot(round_list, buyer, label=label_list[i], color=color_list[i % len(color_list)])[0]
 
-    #plt.legend(loc='upper left')
-    # Create the legend
     fig.legend(lines,
                label_list,
                loc="center left",
                borderaxespad=0.5,
                title="Legend"
                )
-#
-
 
     plt.savefig(f"imgs/graph_test_{test_name}")
 
     if show:
         wm = plt.get_current_fig_manager()
-        # wm.window.state('zoomed')
+        if os.name == 'nt':
+            wm.window.state('zoomed')
         plt.show()
 
     plt.close()

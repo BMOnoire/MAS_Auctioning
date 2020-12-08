@@ -1,46 +1,84 @@
 SEED = 10
 
-ROUNDS = 1000
-TIMES = 1
+SEED = 1
 
-SHOW_SINGLE_GRAPH = True
+ROUNDS = 1000
+TIMES = 2
+
+SHOW_SINGLE_GRAPH = False
 SHOW_MULTI_GRAPH = True
-STEP_PLOTTING = 5
+STEP_PLOTTING = 50
 
 test_list = [
     {
-        "id": "PURE_BID_STRAT",
+        "id": "PURE",
         "execute": True,
         "times": TIMES,
-        "n_buyers": 4,
-        "n_sellers": 3,
+        "n_buyers": 10,
+        "n_sellers": 7,
         "n_rounds": ROUNDS,
         "max_starting_price": 10,
         "range_bidding_factor_increase": [1, 10],
-        "range_bidding_factor_decrease": [0.1, 1],
+        "range_bidding_factor_decrease": [0, 1],
         "max_bidding_factor": 10,
         "epsilon": 0.2,
         "type": "PURE_AUCTIONING",
         "params": {
-            "BIDDING_STRATEGY": True,
+            "BIDDING_STRATEGY": None,
+            "SELLER_STRATEGY": None
+        },
+    },
+    {
+        "id": "LEVL",
+        "execute": True,
+        "times": TIMES,
+        "n_buyers": 10,
+        "n_sellers": 7,
+        "n_rounds": ROUNDS,
+        "max_starting_price": 10,
+        "range_bidding_factor_increase": [1, 10],
+        "range_bidding_factor_decrease": [0, 1],
+        "max_bidding_factor": 10,
+        "epsilon": 0.2,
+        "type": "LEVELED_COMMITMENT_AUCTIONING",
+        "params": {
+            "BIDDING_STRATEGY": None,
+            "SELLER_STRATEGY": None
+        },
+    },
+    {
+        "id": "PURE_SEL_STRAT",
+        "execute": False,
+        "times": TIMES,
+        "n_buyers": 10,
+        "n_sellers": 7,
+        "n_rounds": ROUNDS,
+        "max_starting_price": 10,
+        "range_bidding_factor_increase": [1, 10],
+        "range_bidding_factor_decrease": [0, 1],
+        "max_bidding_factor": 10,
+        "epsilon": 0.2,
+        "type": "PURE_AUCTIONING",
+        "params": {
+            "BIDDING_STRATEGY": None,
             "SELLER_STRATEGY": None
         },
     },
     {
         "id": "LEVL_BID_STRAT",
         "execute": False,
-        "times": TIMES,
-        "n_buyers": 4,
-        "n_sellers": 3,
+        "times" : TIMES,
+        "n_buyers": 10,
+        "n_sellers": 7,
         "n_rounds": ROUNDS,
         "max_starting_price": 10,
         "range_bidding_factor_increase": [1, 10],
-        "range_bidding_factor_decrease": [0.1, 1],
+        "range_bidding_factor_decrease": [0, 1],
         "max_bidding_factor": 10,
         "epsilon": 0.2,
-        "type": "LEVELED_COMMITMENT_AUCTIONING",
+        "type": "PURE_AUCTIONING",
         "params": {
-            "BIDDING_STRATEGY": True,
+            "BIDDING_STRATEGY": None,
             "SELLER_STRATEGY": None
         }
     }

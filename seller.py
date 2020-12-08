@@ -6,10 +6,11 @@ if cfg.SEED:
 
 class Seller:
 
-    def __init__(self, id):
+    def __init__(self, id, strategy):
         self.id = id
         self.profit = 0.0
         self.market_prices = []
+        self.strategy = strategy
 
 
     def uniform_closed(self, a, b):
@@ -19,7 +20,10 @@ class Seller:
 
 
     def init_random_starting_price(self, max_price):
-        return self.uniform_closed(0, max_price)
+        starting_price = self.uniform_closed(0, max_price)
+        if self.strategy:
+            starting_price = max_price
+        return starting_price
 
 
     def add_to_profit(self, profit):

@@ -18,6 +18,10 @@ class Buyer:
         return self.bidding_factor_list[seller_id]
 
 
+    def make_the_bid(self, seller_id, starting_price):
+        return self.bidding_factor_list[seller_id] * starting_price
+
+
     def add_to_profit(self, profit):
         self.profit += profit
 
