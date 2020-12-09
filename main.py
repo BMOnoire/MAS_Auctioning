@@ -35,6 +35,7 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_b
     seller_list = [seller.Seller(i, bidding_strategy_data) for i in range(n_sellers)]
     buyer_list = [buyer.Buyer(i, seller_list, max_bidding_factor, range_bidding_factor_increase, range_bidding_factor_decrease) for i in range(n_buyers)]
 
+
     for round in range(n_rounds):
         # for every round init this dict and added the lists of data during the auctions
         round_stats = {
@@ -88,49 +89,56 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_b
                 # remove the winner from the other auctions
                 winner = buyers.pop(winner_index)
 
-                # update the seller profit, Note: the real list
-                for real_seller in seller_list:
-                    if real_seller.id == current_seller.id:
-                        real_seller.add_to_profit(seller_profit)
-                        break
-
-                # update the buyer profit, Note: the real list
-                for real_buyer in buyer_list:
-                    if real_buyer.id == winner.id:
-                        real_buyer.add_to_profit(winner_profit)
-                        break
-
             elif type == "LEVELED_COMMITMENT_AUCTIONING":
 
                 # get the winner from the other auctions
                 winner = buyers.__getitem__(winner_index)
 
-                # add the buyer id inside the dict, if the key already exists, it return the previous value
-                prev_auction = buyers_won_auction.setdefault(winner.id, (current_seller.id, second_best_bid, winner_profit))
+                current_auction = (current_seller.id, second_best_bid, winner_profit)
 
-                penalty_fee = 0
+                # check if there is previous bidding for the winner id
+                previous_auction = buyers_won_auction.get(winner.id)
 
-                if prev_auction[0] != current_seller.id:
-                    if winner_profit > prev_auction[2]:
-                        penalty_fee = epsilon * prev_auction[1]
-                        buyers_won_auction[winner.id] = (current_seller.id, second_best_bid, winner_profit)
-                    else:
-                        penalty_fee = epsilon * second_best_bid
+                if previous_auction:  # if there is a previous win
 
-                # update the seller profit, Note: the real list
-                for real_slr in seller_list:
-                    if real_slr.id == current_seller.id:
-                        real_slr.add_to_profit(seller_profit)
-                    elif real_slr.id == prev_auction[0]:
-                        real_slr.add_to_profit(penalty_fee)
+                    if winner_profit > previous_auction[2]:  # if the current profit is better than the previous, decommit previous bid and save the new one
+                        buyers_won_auction[winner.id] = current_auction  # update the last bid
 
-                # update the buyer profit, Note: the real list
-                for real_bur in buyer_list:
-                    if real_bur.id == winner.id:
-                        real_bur.add_to_profit(winner_profit)
-                    elif real_bur.id == prev_auction[0]:
-                        real_bur.add_to_profit(-penalty_fee)
+                        penalty_fee = epsilon * previous_auction[1]
+                        # refund the previous seller price minus the penalty fee
+                        refund_seller_index = previous_auction[0]
 
+                    else: # decommit current bid
+                        penalty_fee = epsilon * current_auction[1]
+                        # refund the current seller price minus the penalty fee
+                        refund_seller_index = current_seller.id
+
+                    # refund seller loop
+                    for real_seller in seller_list:
+                        if real_seller.id == refund_seller_index:
+                            real_seller.add_to_profit(penalty_fee)
+                            break
+
+                    # refund buyer loop
+                    for real_buyer in buyer_list:
+                        if real_buyer.id == winner.id:
+                            real_buyer.add_to_profit(-penalty_fee)
+                            break
+
+                else: # else save the current one
+                    buyers_won_auction[winner.id] = current_auction
+
+            # update the seller profit, Note: the real list
+            for real_seller in seller_list:
+                if real_seller.id == current_seller.id:
+                    real_seller.add_to_profit(seller_profit)
+                    break
+
+            # update the buyer profit, Note: the real list
+            for real_buyer in buyer_list:
+                if real_buyer.id == winner.id:
+                    real_buyer.add_to_profit(winner_profit)
+                    break
 
             if bidding_strategy_data:
                 for b in range(len(bid_list)):
