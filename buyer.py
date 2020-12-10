@@ -12,8 +12,8 @@ class Buyer:
         self.profit = 0.0
         self.bidding_factor_max = bidding_factor_max
         self.bidding_factor_list = { slr.id: ( 1 + random.random() * (bidding_factor_max - 1) ) for slr in seller_list}  # range [1, bidding_factor_max]
-        self.bidding_factor_increase = 0.5 #range_bidding_factor_increase[0] + random.random() * (range_bidding_factor_increase[1] - range_bidding_factor_increase[0])  # random number between min_bidding_factor_increase and bidding_factor_max
-        self.bidding_factor_decrease = 0.5 #range_bidding_factor_decrease[0] + random.random() * (range_bidding_factor_decrease[1] - range_bidding_factor_decrease[0])  # random number between 0 and 1
+        self.bidding_factor_increase = 1.1 #range_bidding_factor_increase[0] + random.random() * (range_bidding_factor_increase[1] - range_bidding_factor_increase[0])  # random number between min_bidding_factor_increase and bidding_factor_max
+        self.bidding_factor_decrease = 0.9 #range_bidding_factor_decrease[0] + random.random() * (range_bidding_factor_decrease[1] - range_bidding_factor_decrease[0])  # random number between 0 and 1
 
     def get_bidding_factor(self, seller_id):
         return self.bidding_factor_list[seller_id]
@@ -32,16 +32,16 @@ class Buyer:
             if r > a: return r  # range (a, b)
 
     def increase_bid_factor(self, seller_id):
-        self.bidding_factor_list[seller_id] += self.uniform_closed(0, 1)
-        if self.bidding_factor_list[seller_id] < 1:
-            self.bidding_factor_list[seller_id] = 1
+        self.bidding_factor_list[seller_id] *= self.bidding_factor_increase
+        #if self.bidding_factor_list[seller_id] < 1:
+        #    self.bidding_factor_list[seller_id] = 1
         #elif self.bidding_factor_list[seller_id] > self.bidding_factor_max:
         #    self.bidding_factor_list[seller_id] = self.bidding_factor_max
 
 
 
     def decrease_bid_factor(self, seller_id):
-        self.bidding_factor_list[seller_id] -= self.uniform_closed(0, 1)
+        self.bidding_factor_list[seller_id] *= self.bidding_factor_decrease
         if self.bidding_factor_list[seller_id] < 1:
             self.bidding_factor_list[seller_id] = 1
         #elif self.bidding_factor_list[seller_id] > self.bidding_factor_max:

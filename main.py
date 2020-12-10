@@ -83,6 +83,12 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_b
             # profit for buyers
             winner_profit = market_price - second_best_bid
 
+            if bidding_strategy_data:
+                for i in range(len(bid_list)):
+                    if bid_list[i] == 0:
+                        buyer_list[buyers[i].id].decrease_bid_factor(current_seller.id)
+                    else:
+                        buyer_list[buyers[i].id].increase_bid_factor(current_seller.id)
 
             if type == "PURE_AUCTIONING":
 
@@ -140,12 +146,7 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_b
                     real_buyer.add_to_profit(winner_profit)
                     break
 
-            if bidding_strategy_data:
-                for i in range(len(bid_list)):
-                    if bid_list[i] == 0:
-                        buyer_list[i].decrease_bid_factor(current_seller.id)
-                    else:
-                        buyer_list[i].increase_bid_factor(current_seller.id)
+
 
             if seller_strategy_data:
                 pass
