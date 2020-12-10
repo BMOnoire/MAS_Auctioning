@@ -13,28 +13,23 @@ if cfg.SEED:
 
 def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_bidding_factor, range_bidding_factor_increase, range_bidding_factor_decrease, epsilon, type, params={}):
     if n_sellers >= n_buyers:
-        print("ERROR: (", id,") Buyers have to be more than Sellers, change it")
+        print("ERROR: (", id,") Buyers have to be more than Sellers")
         return None
 
-    if type != "LEVELED_COMMITMENT_AUCTIONING" and type != "PURE_AUCTIONING":
-        print("ERROR: (", id,") wrong auctioning type, change it")
-        return None
-
-    bidding_strategy_data, seller_strategy_data = None, None
+    biddin_strategy_data, seller_strategy_data = None, None
     if params:
-        bidding_strategy_data = params.get('BIDDING_STRATEGY')
+        biddin_strategy_data = params.get('BIDDING_STRATEGY')
         seller_strategy_data = params.get('SELLER_STRATEGY')
-        if seller_strategy_data and seller_strategy_data != "OWN" and seller_strategy_data != "COM": # no right params
-            print("ERROR: (", id, ") seller strategy with wrong params, change it")
-            return None
+
 
     # init OUTCOME
     outcome = []
 
-    # init AGENTS
-    seller_list = [seller.Seller(i, bidding_strategy_data) for i in range(n_sellers)]
-    buyer_list = [buyer.Buyer(i, seller_list, max_bidding_factor, range_bidding_factor_increase, range_bidding_factor_decrease) for i in range(n_buyers)]
+    market_price_list, seller_profit_list, buyer_profit_list = [], [], []
 
+    # init AGENTS
+    seller_list = [seller.Seller(i) for i in range(n_sellers)]
+    buyer_list = [buyer.Buyer(i, seller_list, max_bidding_factor, range_bidding_factor_increase, range_bidding_factor_decrease) for i in range(n_buyers)]
 
     for round in range(n_rounds):
         # for every round init this dict and added the lists of data during the auctions
@@ -46,110 +41,105 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_b
         }
 
         # created a shuffled copy of the buyer_list and seller_list every round
-        sellers = random.sample(seller_list, len(seller_list))
-        buyers = random.sample(buyer_list, len(buyer_list))
-
-        buyers_won_auction = {}  # only for leveled
+        sellers = seller_list.copy() # random.sample(seller_list, len(seller_list))
+        buyers = buyer_list.copy() # random.sample(buyer_list, len(buyer_list))
 
         # start the auctions
-        for current_seller in sellers:
-            seller_price = current_seller.init_random_starting_price(max_starting_price)
+        buyers_won_auction = {}  # only for leveled
+        for slr in sellers:
+            seller_price = slr.init_random_starting_price(max_starting_price)
+            print("seller-price", seller_price)
 
             # the buyers start the bids
-            # make the bid thanks to the factor given by the factor list
-            # note: this bids have the same order of buyer_turn_list
-            bid_list = [buyer.make_the_bid(current_seller.id, seller_price) * seller_price for buyer in buyers]
+            bid_list = []
+            for bur in buyers:
+                # make the bid thanks to the factor given by the factor list
+                buyer_bid = bur.get_bidding_factor(slr.id) * seller_price
+                print(f"bidding factor {bur}", bur.get_bidding_factor(slr.id))
+                bid_list.append(buyer_bid)  # note: this bids have the same order of buyer_turn_list
+
             # bid end
-
-            # MARKET PRICE
+            print("bid_list:", bid_list)
             market_price = sum(bid_list) / len(bid_list)  # avg of all the bids
+
             round_stats["market_price"].append(market_price)
+            print("market_price", market_price)
 
-            # FIND THE WINNER
             bid_list = [(bid if bid <= market_price else 0) for bid in bid_list]  # remove the values over the market_price
+            winner_index = bid_list.index(max(bid_list))  # found the first winner, the other ones... NO
+            print("winner index", winner_index)
+            first_bid = bid_list[winner_index]
+            bid_list[winner_index] = 0  # removed is offer (first_bid)...
+            winner_payment = np.amax(bid_list)  # ...to pick the second max
+            print("winner payment", winner_payment)
 
-            first_best_bid = max(bid_list)
-            winner_index = bid_list.index(first_best_bid)  # found the first winner, the other ones... NO
-
-            bid_list[winner_index] = 0  # removed is offer (best_bid)...
-            second_best_bid = max(bid_list)  # ...to pick the second max
-
-            if not second_best_bid:  # there is only one winner and the max is 0
-                second_best_bid = 0.5 * (first_best_bid + market_price)
-
-            # profit for sellers
-            seller_profit = second_best_bid - seller_price
-
-            # profit for buyers
-            winner_profit = market_price - second_best_bid
-
+            if not winner_payment:  # there is only one winner and the max is 0
+                winner_payment = 0.5 * (first_bid + market_price)
 
             if type == "PURE_AUCTIONING":
+                # profit for sellers
+                seller_profit = winner_payment - seller_price
 
-                # remove the winner from the other auctions
-                winner = buyers.pop(winner_index)
+                # profit for buyers
+                winner = buyers.pop(winner_index)  # remove the winner from the other auctions
+                winner_profit = market_price - winner_payment
+                for real_slr in seller_list:  # update the seller profit, Note: the real list
+                    if real_slr.id == slr.id:
+                        real_slr.add_to_profit(seller_profit)
+
+                for real_bur in buyer_list:  # update the buyer profit, Note: the real list
+                    if real_bur.id == winner.id:
+                        real_bur.add_to_profit(winner_profit)
 
             elif type == "LEVELED_COMMITMENT_AUCTIONING":
+                # profit for sellers
+                seller_profit = winner_payment - seller_price
 
-                # get the winner from the other auctions
-                winner = buyers.__getitem__(winner_index)
-
-                current_auction = (current_seller.id, second_best_bid, winner_profit)
-
-                # check if there is previous bidding for the winner id
-                previous_auction = buyers_won_auction.get(winner.id)
-
-                if previous_auction:  # if there is a previous win
-
-                    if winner_profit > previous_auction[2]:  # if the current profit is better than the previous, decommit previous bid and save the new one
-                        buyers_won_auction[winner.id] = current_auction  # update the last bid
-
-                        penalty_fee = epsilon * previous_auction[1]
-                        # refund the previous seller price minus the penalty fee
-                        refund_seller_index = previous_auction[0]
-
-                    else: # decommit current bid
-                        penalty_fee = epsilon * current_auction[1]
-                        # refund the current seller price minus the penalty fee
-                        refund_seller_index = current_seller.id
-
-                    # refund seller loop
-                    for real_seller in seller_list:
-                        if real_seller.id == refund_seller_index:
-                            real_seller.add_to_profit(penalty_fee)
-                            break
-
-                    # refund buyer loop
-                    for real_buyer in buyer_list:
-                        if real_buyer.id == winner.id:
-                            real_buyer.add_to_profit(-penalty_fee)
-                            break
-
-                else: # else save the current one
-                    buyers_won_auction[winner.id] = current_auction
-
-            # update the seller profit, Note: the real list
-            for real_seller in seller_list:
-                if real_seller.id == current_seller.id:
-                    real_seller.add_to_profit(seller_profit)
-                    break
-
-            # update the buyer profit, Note: the real list
-            for real_buyer in buyer_list:
-                if real_buyer.id == winner.id:
-                    real_buyer.add_to_profit(winner_profit)
-                    break
-
-            if bidding_strategy_data:
-                for i in range(len(bid_list)):
-                    if bid_list[i] == 0:
-                        buyer_list[i].decrease_bid_factor(current_seller.id)
+                # profit for buyers
+                winner = buyers.__getitem__(winner_index)  # remove the winner from the other auctions
+                winner_profit = market_price - winner_payment
+                # add the buyer id inside the dict, if the key already exists, it return the previous value
+                prev_auction = buyers_won_auction.setdefault(winner.id, (slr.id, winner_payment, winner_profit))
+                penalty_fee = 0
+                if prev_auction[0] != slr.id:
+                    if winner_profit > prev_auction[2]:
+                        penalty_fee = epsilon * prev_auction[1]
+                        buyers_won_auction[winner.id] = (slr.id, winner_payment, winner_profit)
                     else:
-                        buyer_list[i].increase_bid_factor(current_seller.id)
+                        penalty_fee = epsilon * winner_payment
 
+                for real_slr in seller_list:  # update the seller profit, Note: the real list
+                    if real_slr.id == slr.id:
+                        real_slr.add_to_profit(seller_profit)
+                    if real_slr.id == prev_auction[0]:
+                        real_slr.add_to_profit(penalty_fee)
+
+                for real_bur in buyer_list:  # update the buyer profit, Note: the real list
+                    if real_bur.id == winner.id:
+                        real_bur.add_to_profit(winner_profit)
+                    if real_bur.id == prev_auction[0]:
+                        real_bur.add_to_profit(-penalty_fee)
+
+            if biddin_strategy_data:
+                print("bid-list", bid_list)
+                print(len(buyers))
+                print(len(bid_list))
+                print(len(buyer_list))
+                for b in range(len(bid_list)):
+                    # print(b)
+                    if bid_list[b] == 0:
+                        buyer_list[b].decrease_bid_factor(slr.id)
+                    else:
+                        buyer_list[b].increase_bid_factor(slr.id)
             if seller_strategy_data:
                 pass
 
+            for bur in buyers:
+                # make the bid thanks to the factor given by the factor list
+                print(f"bidding factor {bur}", bur.get_bidding_factor(slr.id))
+
+        #round_stats["seller_profit"].append(seller_profit)
+        #round_stats["buyer_profit"].append(winner_profit)
         round_stats["seller_profit"] = [seller.profit for seller in seller_list]
         round_stats["buyer_profit"] = [buyer.profit for buyer in buyer_list]
         outcome.append(round_stats)
@@ -212,7 +202,7 @@ def main():
         plotting.plot_graph_result(test["id"], "seller_profit", round_list, seller_final_value, cfg.STEP_PLOTTING, cfg.SHOW_SINGLE_GRAPH)
         plotting.plot_graph_result(test["id"], "buyer_profit", round_list, buyer_final_value, cfg.STEP_PLOTTING, cfg.SHOW_SINGLE_GRAPH)
 
-        plotting.plot_value_comparison(test["id"], round_list, market_final_value, seller_final_value, buyer_final_value, cfg.STEP_PLOTTING, cfg.SHOW_MULTI_GRAPH)
+        plotting.plot_value_comparison(test["id"], round_list, market_final_value, seller_final_value, buyer_final_value, cfg.STEP_PLOTTING, cfg.SHOW_SINGLE_GRAPH)
 
         id_list.append(test["id"]),
         market_list.append(market_final_value)
