@@ -2,8 +2,8 @@ SEED = 10
 
 SEED = 1
 
-ROUNDS = 1000
-TIMES = 100
+ROUNDS = 100
+TIMES = 1
 
 SHOW_SINGLE_GRAPH = True
 SHOW_MULTI_GRAPH = True
@@ -14,8 +14,8 @@ test_list = [
         "id": "PURE",
         "execute": True,
         "times": TIMES,
-        "n_buyers": 10,
-        "n_sellers": 7,
+        "n_buyers": 4,
+        "n_sellers": 3,
         "n_rounds": ROUNDS,
         "max_starting_price": 10,
         "range_bidding_factor_increase": [1, 10],
@@ -30,7 +30,7 @@ test_list = [
     },
     {
         "id": "LEVL",
-        "execute": True,
+        "execute": False,
         "times": TIMES,
         "n_buyers": 10,
         "n_sellers": 7,

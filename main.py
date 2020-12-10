@@ -58,12 +58,18 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_b
             # the buyers start the bids
             # make the bid thanks to the factor given by the factor list
             # note: this bids have the same order of buyer_turn_list
-            bid_list = [buyer.make_the_bid(current_seller.id, seller_price) * seller_price for buyer in buyers]
+            bid_list = [buyer.make_the_bid(current_seller.id, seller_price) for buyer in buyers]
+            bid_factor_list = [buyer.bidding_factor_list[current_seller.id] for buyer in buyers]
+            bid_factor_list2 = [buyer.bidding_factor_list[current_seller.id] for buyer in buyer_list]
+            print("bid_list", bid_list)
+            print("bid_factor_list",bid_factor_list)
+            print("bid_factor_list2", bid_factor_list2)
             # bid end
 
             # MARKET PRICE
             market_price = sum(bid_list) / len(bid_list)  # avg of all the bids
             round_stats["market_price"].append(market_price)
+            print("market_price", market_price)
 
             # FIND THE WINNER
             bid_list = [(bid if bid <= market_price else 0) for bid in bid_list]  # remove the values over the market_price
@@ -89,6 +95,11 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_b
                         buyer_list[buyers[i].id].decrease_bid_factor(current_seller.id)
                     else:
                         buyer_list[buyers[i].id].increase_bid_factor(current_seller.id)
+
+            bid_factor_list = [buyer.bidding_factor_list[current_seller.id] for buyer in buyers]
+            print("bid_factor_list", bid_factor_list)
+            bid_factor_list2 = [buyer.bidding_factor_list[current_seller.id] for buyer in buyer_list]
+            print("bid_factor_list2", bid_factor_list2)
 
             if type == "PURE_AUCTIONING":
 
