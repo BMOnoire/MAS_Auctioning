@@ -21,7 +21,7 @@ class Seller:
 
     def init_random_starting_price(self, max_price):
         starting_price = self.uniform_closed(0, max_price)
-        if self.strategy:
+        if self.strategy == None:
             starting_price = max_price
         return starting_price
 

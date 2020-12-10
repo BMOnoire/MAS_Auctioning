@@ -54,16 +54,12 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_b
         # start the auctions
         for current_seller in sellers:
             seller_price = current_seller.init_random_starting_price(max_starting_price)
+            print("seller_price", seller_price)
 
             # the buyers start the bids
             # make the bid thanks to the factor given by the factor list
             # note: this bids have the same order of buyer_turn_list
             bid_list = [buyer.make_the_bid(current_seller.id, seller_price) for buyer in buyers]
-            bid_factor_list = [buyer.bidding_factor_list[current_seller.id] for buyer in buyers]
-            bid_factor_list2 = [buyer.bidding_factor_list[current_seller.id] for buyer in buyer_list]
-            print("bid_list", bid_list)
-            print("bid_factor_list",bid_factor_list)
-            print("bid_factor_list2", bid_factor_list2)
             # bid end
 
             # MARKET PRICE
@@ -81,13 +77,16 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_b
             second_best_bid = max(bid_list)  # ...to pick the second max
 
             if not second_best_bid:  # there is only one winner and the max is 0
-                second_best_bid = 0.5 * (first_best_bid + market_price)
+                second_best_bid = 0.5 * (first_best_bid + seller_price)
 
+            print("payment price", second_best_bid)
             # profit for sellers
             seller_profit = second_best_bid - seller_price
 
             # profit for buyers
             winner_profit = market_price - second_best_bid
+
+            print("profit (winner, seller)", winner_profit, seller_profit)
 
             if bidding_strategy_data:
                 for i in range(len(bid_list)):
@@ -97,9 +96,9 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_b
                         buyer_list[buyers[i].id].increase_bid_factor(current_seller.id)
 
             bid_factor_list = [buyer.bidding_factor_list[current_seller.id] for buyer in buyers]
-            print("bid_factor_list", bid_factor_list)
+            # print("bid_factor_list", bid_factor_list)
             bid_factor_list2 = [buyer.bidding_factor_list[current_seller.id] for buyer in buyer_list]
-            print("bid_factor_list2", bid_factor_list2)
+            # print("bid_factor_list2", bid_factor_list2)
 
             if type == "PURE_AUCTIONING":
 
@@ -157,13 +156,17 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_b
                     real_buyer.add_to_profit(winner_profit)
                     break
 
-
+            profit_buyer = [buyer.profit for buyer in buyer_list]
+            profit_seller = [seller.profit for seller in seller_list]
+            print("seller_profit", profit_seller)
+            print("buyer_profit", profit_buyer)
 
             if seller_strategy_data:
                 pass
 
         round_stats["seller_profit"] = [seller.profit for seller in seller_list]
         round_stats["buyer_profit"] = [buyer.profit for buyer in buyer_list]
+
         outcome.append(round_stats)
 
     return outcome

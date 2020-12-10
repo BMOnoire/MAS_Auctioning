@@ -2,12 +2,12 @@ SEED = 10
 
 SEED = 1
 
-ROUNDS = 100
+ROUNDS = 10
 TIMES = 1
 
 SHOW_SINGLE_GRAPH = True
 SHOW_MULTI_GRAPH = True
-STEP_PLOTTING = 50
+STEP_PLOTTING = 1
 
 test_list = [
     {
