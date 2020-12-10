@@ -141,11 +141,11 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_b
                     break
 
             if bidding_strategy_data:
-                for b in range(len(bid_list)):
-                    if bid_list[b] == 0:
-                        buyer_list[b].decrease_bid_factor(current_seller.id)
+                for i in range(len(bid_list)):
+                    if bid_list[i] == 0:
+                        buyer_list[i].decrease_bid_factor(current_seller.id)
                     else:
-                        buyer_list[b].increase_bid_factor(current_seller.id)
+                        buyer_list[i].increase_bid_factor(current_seller.id)
 
             if seller_strategy_data:
                 pass
