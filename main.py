@@ -59,7 +59,18 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_b
             # the buyers start the bids
             # make the bid thanks to the factor given by the factor list
             # note: this bids have the same order of buyer_turn_list
+
+
             bid_list = [buyer.make_the_bid(current_seller.id, seller_price) for buyer in buyers]
+            print(bid_list)
+            if type == "LEVELED_COMMITMENT_AUCTIONING" and bidding_strategy_data:
+                for i, buyer_win_2nd_auct in enumerate(buyers):
+                    previous_auction = buyers_won_auction.get(buyer_win_2nd_auct.id)
+                    if previous_auction:
+                        penalty_fee = epsilon * previous_auction[1]
+                        lammerda= previous_auction[2] + penalty_fee
+                        bid_list[i] -= lammerda
+                        print("updated", i, bid_list)
             # bid end
 
             # MARKET PRICE
