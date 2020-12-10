@@ -32,7 +32,7 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_b
     outcome = []
 
     # init AGENTS
-    seller_list = [seller.Seller(i, bidding_strategy_data) for i in range(n_sellers)]
+    seller_list = [seller.Seller(i, seller_strategy_data) for i in range(n_sellers)]
     buyer_list = [buyer.Buyer(i, seller_list, max_bidding_factor, range_bidding_factor_increase, range_bidding_factor_decrease) for i in range(n_buyers)]
 
 
