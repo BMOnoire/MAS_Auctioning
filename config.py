@@ -10,16 +10,16 @@ STEP_PLOTTING = None
 # LEVELED_COMMITMENT_AUCTIONING
 # PURE_AUCTIONING
 
-TEST_TITLE = "Variation Number of Both Agents (Pure)"
-TYPE = "PURE_AUCTIONING"
+TEST_TITLE = "Variation Number of Both Agents (Leveled Commitment)"
+TYPE = "LEVELED_COMMITMENT_AUCTIONING"
 
 test_list = [
     {
-        "id": "10 S against 20 B",
+        "id": "Max start price 10",
         "execute": True,
         "times": TIMES,
-        "n_buyers": 20,
-        "n_sellers": 10,
+        "n_buyers": 4,
+        "n_sellers": 3,
         "n_rounds": ROUNDS,
         "max_starting_price": 10,
         "range_bidding_factor_increase": [1, 2],
@@ -33,13 +33,13 @@ test_list = [
         }
     },
     {
-        "id": "20 S against 50 B",
+        "id": "Max start price 20",
         "execute": True,
         "times": TIMES,
-        "n_buyers": 50,
-        "n_sellers": 20,
+        "n_buyers": 4,
+        "n_sellers": 3,
         "n_rounds": ROUNDS,
-        "max_starting_price": 10,
+        "max_starting_price": 20,
         "range_bidding_factor_increase": [1, 2],
         "range_bidding_factor_decrease": [0, 1],
         "max_bidding_factor": 2,
@@ -51,13 +51,49 @@ test_list = [
         }
     },
     {
-        "id": "50 S against 100 B",
+        "id": "Max start price 50",
         "execute": True,
         "times": TIMES,
-        "n_buyers": 100,
-        "n_sellers": 50,
+        "n_buyers": 4,
+        "n_sellers": 3,
         "n_rounds": ROUNDS,
-        "max_starting_price": 10,
+        "max_starting_price": 50,
+        "range_bidding_factor_increase": [1, 2],
+        "range_bidding_factor_decrease": [0, 1],
+        "max_bidding_factor": 2,
+        "epsilon": 0.2,
+        "type": TYPE,
+        "params": {
+            "BIDDING_STRATEGY": True,
+            "SELLER_STRATEGY": None
+        }
+    },
+    {
+        "id": "Max start price 100",
+        "execute": True,
+        "times": TIMES,
+        "n_buyers": 4,
+        "n_sellers": 3,
+        "n_rounds": ROUNDS,
+        "max_starting_price": 100,
+        "range_bidding_factor_increase": [1, 2],
+        "range_bidding_factor_decrease": [0, 1],
+        "max_bidding_factor": 2,
+        "epsilon": 0.2,
+        "type": TYPE,
+        "params": {
+            "BIDDING_STRATEGY": True,
+            "SELLER_STRATEGY": None
+        }
+    },
+    {
+        "id": "Max start price 1000",
+        "execute": True,
+        "times": TIMES,
+        "n_buyers": 4,
+        "n_sellers": 3,
+        "n_rounds": ROUNDS,
+        "max_starting_price": 1000,
         "range_bidding_factor_increase": [1, 2],
         "range_bidding_factor_decrease": [0, 1],
         "max_bidding_factor": 2,
