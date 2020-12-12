@@ -61,7 +61,7 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_b
             # note: this bids have the same order of buyer_turn_list
             bid_list = [buyer.make_the_bid(current_seller.id, seller_price) for buyer in buyers]
 
-            #if the buyer has alrady won an auction, I have to calculate the new bid in a way that guarantees a profit
+            # if the buyer has alrady won an auction, I have to calculate the new bid in a way that guarantees a profit
             if type == "LEVELED_COMMITMENT_AUCTIONING" and bidding_strategy_data:
                 for i, buyer_win_2nd_auct in enumerate(buyers):
                     previous_auction = buyers_won_auction.get(buyer_win_2nd_auct.id)
@@ -119,35 +119,43 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_b
                 # get the winner from the other auctions
                 winner = buyers.__getitem__(winner_index)
 
-                current_auction = (current_seller.id, second_best_bid, winner_profit)
+                current_auction = (current_seller.id, second_best_bid, winner_profit, seller_profit)
 
                 # check if there is previous bidding for the winner id
                 previous_auction = buyers_won_auction.get(winner.id)
 
                 if previous_auction:  # if there is a previous win
 
-                    if winner_profit > previous_auction[2]:  # if the current profit is better than the previous, decommit previous bid and save the new one
+                    if winner_profit > previous_auction[2]:  #if the current profit is better than the previous, decommit previous bid and save the new one
                         buyers_won_auction[winner.id] = current_auction  # update the last bid
 
                         penalty_fee = epsilon * previous_auction[1]
                         # refund the previous seller price minus the penalty fee
                         refund_seller_index = previous_auction[0]
+                        subtract_seller_profit = previous_auction[3]
+                        subtract_buyer_profit = previous_auction[2]
+
+
 
                     else: # decommit current bid
                         penalty_fee = epsilon * current_auction[1]
                         # refund the current seller price minus the penalty fee
                         refund_seller_index = current_seller.id
+                        subtract_seller_profit = seller_profit
+                        subtract_buyer_profit = winner_profit
 
                     # refund seller loop
                     for real_seller in seller_list:
                         if real_seller.id == refund_seller_index:
                             real_seller.add_to_profit(penalty_fee)
+                            real_seller.add_to_profit(-subtract_seller_profit)
                             break
 
                     # refund buyer loop
                     for real_buyer in buyer_list:
                         if real_buyer.id == winner.id:
                             real_buyer.add_to_profit(-penalty_fee)
+                            real_buyer.add_to_profit(-subtract_buyer_profit)
                             break
 
                 else: # else save the current one
