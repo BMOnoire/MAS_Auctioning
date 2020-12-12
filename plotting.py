@@ -96,7 +96,7 @@ def plot_diff_results(test_name, round_list, label_list, market_set, seller_set,
 
     fig.legend(lines,
                label_list,
-               loc="center left",
+               loc="upper left",
                borderaxespad=0.5,
                title="Legend"
                )
