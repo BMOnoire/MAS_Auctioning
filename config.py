@@ -10,8 +10,8 @@ STEP_PLOTTING = None
 # LEVELED_COMMITMENT_AUCTIONING
 # PURE_AUCTIONING
 
-TEST_TITLE = "Variation Number of Both Agents (Leveled Commitment)"
-TYPE = "LEVELED_COMMITMENT_AUCTIONING"
+TEST_TITLE = "Variation Start Price (Pure)"
+TYPE = "PURE_AUCTIONING"
 
 test_list = [
     {
