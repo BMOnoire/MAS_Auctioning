@@ -40,7 +40,7 @@ test_list = [
         "max_starting_price": 10,
         "range_bidding_factor_increase": [1, 2],
         "range_bidding_factor_decrease": [0.5, 1],
-        "max_bidding_factor": 10,
+        "max_bidding_factor": 2,
         "epsilon": 0.2,
         "type": "LEVELED_COMMITMENT_AUCTIONING",
         "params": {

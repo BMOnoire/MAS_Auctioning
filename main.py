@@ -69,6 +69,8 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_b
                         penalty_fee = epsilon * previous_auction[1]
                         decommit_cost = previous_auction[2] + penalty_fee
                         bid_list[i] -= decommit_cost
+                bid_list = [x for x in bid_list if x >= seller_price]
+
             # bid end
 
             # MARKET PRICE
@@ -134,7 +136,6 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_b
                         refund_seller_index = previous_auction[0]
                         subtract_seller_profit = previous_auction[3]
                         subtract_buyer_profit = previous_auction[2]
-
 
 
                     else: # decommit current bid
