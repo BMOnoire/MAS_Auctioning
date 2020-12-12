@@ -4,35 +4,18 @@ ROUNDS = 1000
 TIMES = 10
 
 SHOW_PRINT = False
-SHOW_SINGLE_GRAPH = True
+SHOW_SINGLE_GRAPH = False
 SHOW_MULTI_GRAPH = True
 STEP_PLOTTING = None
 # LEVELED_COMMITMENT_AUCTIONING
 # PURE_AUCTIONING
 
-TEST_TITLE = ""
+TEST_TITLE = "Variation Bidding Factor Increase (Pure)"
+TYPE = "PURE_AUCTIONING"
 
 test_list = [
     {
-        "id": "PURE",
-        "execute": False,
-        "times": TIMES,
-        "n_buyers": 10,
-        "n_sellers": 7,
-        "n_rounds": ROUNDS,
-        "max_starting_price": 10,
-        "range_bidding_factor_increase": [1, 2],
-        "range_bidding_factor_decrease": [0.5, 1],
-        "max_bidding_factor": 2,
-        "epsilon": 0.2,
-        "type": "PURE_AUCTIONING",
-        "params": {
-            "BIDDING_STRATEGY": True,
-            "SELLER_STRATEGY": None
-        },
-    },
-    {
-        "id": "LEVL",
+        "id": "Bid Factor Increase 1-2",
         "execute": True,
         "times": TIMES,
         "n_buyers": 4,
@@ -40,14 +23,86 @@ test_list = [
         "n_rounds": ROUNDS,
         "max_starting_price": 10,
         "range_bidding_factor_increase": [1, 2],
-        "range_bidding_factor_decrease": [0.5, 1],
+        "range_bidding_factor_decrease": [0.0, 1.0],
         "max_bidding_factor": 2,
         "epsilon": 0.2,
-        "type": "LEVELED_COMMITMENT_AUCTIONING",
+        "type": TYPE,
         "params": {
             "BIDDING_STRATEGY": True,
             "SELLER_STRATEGY": None
-        },
+        }
+    },
+    {
+        "id": "Bid Factor Increase 2-3",
+        "execute": True,
+        "times": TIMES,
+        "n_buyers": 4,
+        "n_sellers": 3,
+        "n_rounds": ROUNDS,
+        "max_starting_price": 10,
+        "range_bidding_factor_increase": [2, 3],
+        "range_bidding_factor_decrease": [0.0, 1.0],
+        "max_bidding_factor": 2,
+        "epsilon": 0.2,
+        "type": TYPE,
+        "params": {
+            "BIDDING_STRATEGY": True,
+            "SELLER_STRATEGY": None
+        }
+    },
+    {
+        "id": "Bid Factor Increase 3-5",
+        "execute": True,
+        "times": TIMES,
+        "n_buyers": 4,
+        "n_sellers": 3,
+        "n_rounds": ROUNDS,
+        "max_starting_price": 10,
+        "range_bidding_factor_increase": [3, 5],
+        "range_bidding_factor_decrease": [0.0, 1.0],
+        "max_bidding_factor": 2,
+        "epsilon": 0.2,
+        "type": TYPE,
+        "params": {
+            "BIDDING_STRATEGY": True,
+            "SELLER_STRATEGY": None
+        }
+    },
+    {
+        "id": "Bid Factor Increase 5-10",
+        "execute": True,
+        "times": TIMES,
+        "n_buyers": 4,
+        "n_sellers": 3,
+        "n_rounds": ROUNDS,
+        "max_starting_price": 10,
+        "range_bidding_factor_increase": [5, 10],
+        "range_bidding_factor_decrease": [0.0, 1.0],
+        "max_bidding_factor": 2,
+        "epsilon": 0.2,
+        "type": TYPE,
+        "params": {
+            "BIDDING_STRATEGY": True,
+            "SELLER_STRATEGY": None
+        }
+    },
+    {
+        "id": "Bid Factor Increase 10-20",
+        "execute": True,
+        "times": TIMES,
+        "n_buyers": 4,
+        "n_sellers": 3,
+        "n_rounds": ROUNDS,
+        "max_starting_price": 10,
+        "range_bidding_factor_increase": [10, 20],
+        "range_bidding_factor_decrease": [0.0, 1.0],
+        "max_bidding_factor": 2,
+        "epsilon": 0.2,
+        "type": TYPE,
+        "params": {
+            "BIDDING_STRATEGY": True,
+            "SELLER_STRATEGY": None
+        }
     }
 ]
 
