@@ -51,10 +51,10 @@ def plot_value_comparison(test_name, round_list, market_list, seller_list, buyer
 
 def plot_diff_results(test_name, round_list, label_list, market_set, seller_set, buyer_set, step, show=False):
     lines = []
-    fig, (ax1, ax2, ax3) = plt.subplots(1, 3)
+    fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(20, 10))
 
     if step:
-        round_list = [val for i, val in enumerate(round_list) if not i % step ]
+        round_list = [val for i, val in enumerate(round_list) if not i % step]
 
     ax1.set_title('Market Price comparison')
     for i, market in enumerate(market_set):
