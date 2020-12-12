@@ -244,7 +244,7 @@ def main():
         plotting.plot_graph_result(test["id"], "seller_profit", round_list, seller_final_value, cfg.STEP_PLOTTING, cfg.SHOW_SINGLE_GRAPH)
         plotting.plot_graph_result(test["id"], "buyer_profit", round_list, buyer_final_value, cfg.STEP_PLOTTING, cfg.SHOW_SINGLE_GRAPH)
 
-        plotting.plot_value_comparison(test["id"], round_list, market_final_value, seller_final_value, buyer_final_value, cfg.STEP_PLOTTING, cfg.SHOW_MULTI_GRAPH)
+        plotting.plot_value_comparison(test["id"], round_list, market_final_value, seller_final_value, buyer_final_value, cfg.STEP_PLOTTING, cfg.SHOW_SINGLE_GRAPH)
 
         id_list.append(test["id"]),
         market_list.append(market_final_value)
@@ -252,7 +252,7 @@ def main():
         buyer_list.append(buyer_final_value)
 
 
-    plotting.plot_diff_results("test_comparison", round_list, id_list, market_list, seller_list, buyer_list, cfg.STEP_PLOTTING, cfg.SHOW_MULTI_GRAPH)
+    plotting.plot_diff_results("test_comparison", round_list, id_list, market_list, seller_list, buyer_list, cfg.STEP_PLOTTING, cfg.SHOW_MULTI_GRAPH, cfg.TEST_TITLE)
 
 if __name__ == "__main__":
     janitor.create_dir("imgs")
