@@ -2,7 +2,7 @@ SEED = 10
 
 SEED = 1
 
-ROUNDS = 1000
+ROUNDS = 100
 TIMES = 1
 
 SHOW_PRINT = False
