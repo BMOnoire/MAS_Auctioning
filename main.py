@@ -54,7 +54,7 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_b
         # start the auctions
         for current_seller in sellers:
             seller_price = current_seller.init_random_starting_price(max_starting_price)
-            print("seller_price", seller_price)
+            if cfg.SHOW_PRINT: print("seller_price", seller_price)
 
             # the buyers start the bids
             # make the bid thanks to the factor given by the factor list
@@ -74,7 +74,7 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_b
             # MARKET PRICE
             market_price = sum(bid_list) / len(bid_list)  # avg of all the bids
             round_stats["market_price"].append(market_price)
-            print("market_price", market_price)
+            if cfg.SHOW_PRINT: print("market_price", market_price)
 
             # FIND THE WINNER
             bid_list = [(bid if bid <= market_price else 0) for bid in bid_list]  # remove the values over the market_price
@@ -88,14 +88,14 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_b
             if not second_best_bid:  # there is only one winner and the max is 0
                 second_best_bid = 0.5 * (first_best_bid + seller_price)
 
-            print("payment price", second_best_bid)
+            if cfg.SHOW_PRINT: print("payment price", second_best_bid)
             # profit for sellers
             seller_profit = second_best_bid - seller_price
 
             # profit for buyers
             winner_profit = market_price - second_best_bid
 
-            print("profit (winner, seller)", winner_profit, seller_profit)
+            if cfg.SHOW_PRINT: print("profit (winner, seller)", winner_profit, seller_profit)
 
             if bidding_strategy_data:
                 for i in range(len(bid_list)):
@@ -105,9 +105,9 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_b
                         buyer_list[buyers[i].id].increase_bid_factor(current_seller.id)
 
             bid_factor_list = [buyer.bidding_factor_list[current_seller.id] for buyer in buyers]
-            print("bid_factor_list", bid_factor_list)
+            if cfg.SHOW_PRINT: print("bid_factor_list", bid_factor_list)
             bid_factor_list2 = [buyer.bidding_factor_list[current_seller.id] for buyer in buyer_list]
-            # print("bid_factor_list2", bid_factor_list2)
+            # if cfg.SHOW_PRINT: print("bid_factor_list2", bid_factor_list2)
 
             if type == "PURE_AUCTIONING":
 
@@ -175,8 +175,8 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_b
 
             profit_buyer = [buyer.profit for buyer in buyer_list]
             profit_seller = [seller.profit for seller in seller_list]
-            print("seller_profit", profit_seller)
-            print("buyer_profit", profit_buyer)
+            if cfg.SHOW_PRINT: print("seller_profit", profit_seller)
+            if cfg.SHOW_PRINT: print("buyer_profit", profit_buyer)
 
             if seller_strategy_data:
                 pass
