@@ -5,39 +5,111 @@ TIMES = 10
 
 SHOW_PRINT = False
 SHOW_SINGLE_GRAPH = False
-SHOW_MULTI_GRAPH = True
+SHOW_MULTI_GRAPH = False
 STEP_PLOTTING = None
 # LEVELED_COMMITMENT_AUCTIONING
 # PURE_AUCTIONING
 
-TEST_TITLE = "Confront Auctioning Types"
-TYPE = "LEVELED_COMMITMENT_AUCTIONING"
+TEST_TITLE = "Variation Different Buyers (Pure)"
+TYPE = "PURE_AUCTIONING"
 
 test_list = [
     {
-        "id": "pure",
+        "id": "3 S against 4 B",
         "execute": True,
         "times": TIMES,
-        "n_buyers": 2,
-        "n_sellers": 1,
+        "n_buyers": 4,
+        "n_sellers": 3,
         "n_rounds": ROUNDS,
         "max_starting_price": 10,
         "range_bidding_factor_increase": [1, 2],
         "range_bidding_factor_decrease": [0, 1],
         "max_bidding_factor": 2,
         "epsilon": 0.2,
-        "type": "PURE_AUCTIONING",
+        "type": TYPE,
         "params": {
             "BIDDING_STRATEGY": True,
             "SELLER_STRATEGY": None
         }
     },
     {
-        "id": "leveled commitment",
+        "id": "3 S against 5 B",
         "execute": True,
         "times": TIMES,
-        "n_buyers": 2,
-        "n_sellers": 1,
+        "n_buyers": 5,
+        "n_sellers": 3,
+        "n_rounds": ROUNDS,
+        "max_starting_price": 10,
+        "range_bidding_factor_increase": [1, 2],
+        "range_bidding_factor_decrease": [0, 1],
+        "max_bidding_factor": 2,
+        "epsilon": 0.2,
+        "type": TYPE,
+        "params": {
+            "BIDDING_STRATEGY": True,
+            "SELLER_STRATEGY": None
+        }
+    },
+    {
+        "id": "3 S against 10 B",
+        "execute": True,
+        "times": TIMES,
+        "n_buyers": 10,
+        "n_sellers": 3,
+        "n_rounds": ROUNDS,
+        "max_starting_price": 10,
+        "range_bidding_factor_increase": [1, 2],
+        "range_bidding_factor_decrease": [0, 1],
+        "max_bidding_factor": 2,
+        "epsilon": 0.2,
+        "type": TYPE,
+        "params": {
+            "BIDDING_STRATEGY": True,
+            "SELLER_STRATEGY": None
+        }
+    },
+    {
+        "id": "3 S against 20 B",
+        "execute": True,
+        "times": TIMES,
+        "n_buyers": 20,
+        "n_sellers": 3,
+        "n_rounds": ROUNDS,
+        "max_starting_price": 10,
+        "range_bidding_factor_increase": [1, 2],
+        "range_bidding_factor_decrease": [0, 1],
+        "max_bidding_factor": 2,
+        "epsilon": 0.2,
+        "type": TYPE,
+        "params": {
+            "BIDDING_STRATEGY": True,
+            "SELLER_STRATEGY": None
+        }
+    },
+    {
+        "id": "3 S against 50 B",
+        "execute": True,
+        "times": TIMES,
+        "n_buyers": 50,
+        "n_sellers": 3,
+        "n_rounds": ROUNDS,
+        "max_starting_price": 10,
+        "range_bidding_factor_increase": [1, 2],
+        "range_bidding_factor_decrease": [0, 1],
+        "max_bidding_factor": 2,
+        "epsilon": 0.2,
+        "type": TYPE,
+        "params": {
+            "BIDDING_STRATEGY": True,
+            "SELLER_STRATEGY": None
+        }
+    },
+    {
+        "id": "3 S against 100 B",
+        "execute": True,
+        "times": TIMES,
+        "n_buyers": 100,
+        "n_sellers": 3,
         "n_rounds": ROUNDS,
         "max_starting_price": 10,
         "range_bidding_factor_increase": [1, 2],

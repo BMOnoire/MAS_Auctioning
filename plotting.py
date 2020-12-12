@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import os
 
 
-color_list = ["red", "green", "blue", "black", "orange"]
+color_list = ["red", "green", "blue", "black", "orange", "violet"]
 
 
 def plot_graph_result(test_name, label, round_list, value_list, step, show=False):
