@@ -1,9 +1,7 @@
-SEED = 10
-
 SEED = 1
 
-ROUNDS = 100
-TIMES = 1
+ROUNDS = 1000
+TIMES = 10
 
 SHOW_PRINT = False
 SHOW_SINGLE_GRAPH = True
@@ -11,6 +9,9 @@ SHOW_MULTI_GRAPH = True
 STEP_PLOTTING = None
 # LEVELED_COMMITMENT_AUCTIONING
 # PURE_AUCTIONING
+
+TEST_TITLE = ""
+
 test_list = [
     {
         "id": "PURE",
