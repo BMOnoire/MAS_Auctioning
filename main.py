@@ -74,7 +74,9 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_b
             # bid end
 
             # MARKET PRICE
+            print("bid list", bid_list)
             market_price = sum(bid_list) / len(bid_list)  # avg of all the bids
+
             round_stats["market_price"].append(market_price)
             if cfg.SHOW_PRINT: print("market_price", market_price)
 
@@ -130,7 +132,6 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_b
 
                     if winner_profit > previous_auction[2]:  #if the current profit is better than the previous, decommit previous bid and save the new one
                         buyers_won_auction[winner.id] = current_auction  # update the last bid
-
                         penalty_fee = epsilon * previous_auction[1]
                         # refund the previous seller price minus the penalty fee
                         refund_seller_index = previous_auction[0]
@@ -180,7 +181,9 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_b
             if cfg.SHOW_PRINT: print("buyer_profit", profit_buyer)
 
             if seller_strategy_data:
-                pass
+                current_seller.previous_auction_price = second_best_bid
+                current_seller.previous_market_price = market_price
+                current_seller.previous_starting_price = seller_price
 
         round_stats["seller_profit"] = [seller.profit for seller in seller_list]
         round_stats["buyer_profit"] = [buyer.profit for buyer in buyer_list]

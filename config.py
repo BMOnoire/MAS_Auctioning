@@ -1,91 +1,54 @@
-SEED = 2
+SEED = 1
 
 ROUNDS = 1000
 TIMES = 10
 
 SHOW_PRINT = False
-SHOW_SINGLE_GRAPH = False
-SHOW_MULTI_GRAPH = False
+SHOW_SINGLE_GRAPH = True
+SHOW_MULTI_GRAPH = True
 STEP_PLOTTING = None
 # LEVELED_COMMITMENT_AUCTIONING
 # PURE_AUCTIONING
 
-TEST_TITLE = "Variation Penalty Factor (Leveled Commitment)"
-TYPE = "LEVELED_COMMITMENT_AUCTIONING"
+TEST_TITLE = ""
 
 test_list = [
     {
-        "id": "Penalty factor 02",
-        "execute": True,
+        "id": "PURE",
+        "execute": False,
         "times": TIMES,
-        "n_buyers": 4,
-        "n_sellers": 3,
+        "n_buyers": 10,
+        "n_sellers": 7,
         "n_rounds": ROUNDS,
         "max_starting_price": 10,
         "range_bidding_factor_increase": [1, 2],
-        "range_bidding_factor_decrease": [0, 1],
+        "range_bidding_factor_decrease": [0.5, 1],
         "max_bidding_factor": 2,
         "epsilon": 0.2,
-        "type": TYPE,
+        "type": "PURE_AUCTIONING",
         "params": {
             "BIDDING_STRATEGY": True,
             "SELLER_STRATEGY": None
-        }
+        },
     },
     {
-        "id": "Penalty factor 04",
+        "id": "LEVL",
         "execute": True,
         "times": TIMES,
-        "n_buyers": 4,
-        "n_sellers": 3,
+        "n_buyers": 7,
+        "n_sellers": 5,
         "n_rounds": ROUNDS,
         "max_starting_price": 10,
         "range_bidding_factor_increase": [1, 2],
-        "range_bidding_factor_decrease": [0, 1],
+        "range_bidding_factor_decrease": [0.5, 1],
         "max_bidding_factor": 2,
-        "epsilon": 0.4,
-        "type": TYPE,
+        "epsilon": 0.2,
+        "type": "LEVELED_COMMITMENT_AUCTIONING",
         "params": {
             "BIDDING_STRATEGY": True,
-            "SELLER_STRATEGY": None
-        }
-    },
-    {
-        "id": "Penalty factor 06",
-        "execute": True,
-        "times": TIMES,
-        "n_buyers": 4,
-        "n_sellers": 3,
-        "n_rounds": ROUNDS,
-        "max_starting_price": 10,
-        "range_bidding_factor_increase": [1, 2],
-        "range_bidding_factor_decrease": [0, 1],
-        "max_bidding_factor": 2,
-        "epsilon": 0.6,
-        "type": TYPE,
-        "params": {
-            "BIDDING_STRATEGY": True,
-            "SELLER_STRATEGY": None
-        }
-    },
-    {
-        "id": "Penalty factor 08",
-        "execute": True,
-        "times": TIMES,
-        "n_buyers": 4,
-        "n_sellers": 3,
-        "n_rounds": ROUNDS,
-        "max_starting_price": 10,
-        "range_bidding_factor_increase": [1, 2],
-        "range_bidding_factor_decrease": [0, 1],
-        "max_bidding_factor": 2,
-        "epsilon": 0.8,
-        "type": TYPE,
-        "params": {
-            "BIDDING_STRATEGY": True,
-            "SELLER_STRATEGY": None
-        }
-    },
+            "SELLER_STRATEGY": "COM",
+        },
+    }
 ]
 
 """
