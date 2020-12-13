@@ -32,7 +32,7 @@ If you want to change the behaviour of the program then modify the file config.p
 				"max_starting_price": 10,      <-------------- define the maximum value for the starting price. It is initialized between a range of 0 and max_starting_price
 				"range_bidding_factor_increase": [1, 2],    <- random init between this range
 				"range_bidding_factor_decrease": [0.5, 1],  <- random init between this range
-				"max_bidding_factor": 2,       <-------------- define the maximum value for the bidding factor. It is initialized between a range of 0 and max_bidding_factor
+				"max_bidding_factor": 2,       <-------------- define the maximum value for the bidding factor. It is initialized between a range of 1 and max_bidding_factor
 				"epsilon": 0.2,
 				"type": "PURE_AUCTIONING",
 				"params": {
