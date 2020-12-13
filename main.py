@@ -45,6 +45,8 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_b
             "buyer_profit": []
         }
 
+        if cfg.SHOW_PRINT: print("round", round)
+
         # created a shuffled copy of the buyer_list and seller_list every round
         sellers = random.sample(seller_list, len(seller_list))
         buyers = random.sample(buyer_list, len(buyer_list))
