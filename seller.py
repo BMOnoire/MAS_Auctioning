@@ -32,12 +32,10 @@ class Seller:
             else:
                 buyer_profit = self.previous_market_price - self.previous_auction_price
                 starting_price = self.previous_auction_price - buyer_profit
-                print(buyer_profit, starting_price)
                 if starting_price <= 0:
                     starting_price = self.uniform_closed(0, max_price)
                 if starting_price > max_price:
                     starting_price = self.uniform_closed(0, max_price)
-        print("starting", starting_price)
         return starting_price
 
     def add_to_profit(self, profit):

@@ -76,7 +76,7 @@ def launch_new_test(id, n_buyers, n_sellers, n_rounds, max_starting_price, max_b
             # bid end
 
             # MARKET PRICE
-            print("bid list", bid_list)
+            if cfg.SHOW_PRINT: ("bid list", bid_list)
             market_price = sum(bid_list) / len(bid_list)  # avg of all the bids
 
             round_stats["market_price"].append(market_price)
